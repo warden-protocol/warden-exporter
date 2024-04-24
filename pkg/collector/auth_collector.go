@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	accountMetrciName = "warden_accounts"
+	accountMetricName = "warden_accounts"
 )
 
 var accounts = prometheus.NewDesc(

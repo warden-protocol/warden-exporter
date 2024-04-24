@@ -19,7 +19,7 @@ const (
 
 var intents = prometheus.NewDesc(
 	intentsMetricName,
-	"Returns the number of Spaces existing in chain",
+	"Returns the number of Intents existing in chain",
 	[]string{
 		"chain_id",
 		"status",

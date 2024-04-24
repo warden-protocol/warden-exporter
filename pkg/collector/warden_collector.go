@@ -18,7 +18,7 @@ const (
 	keysEcdsaMetricName   = "warden_keys_ecdsa"
 	keysEddsaMetricName   = "warden_keys_eddsa"
 	keysPendingMetricName = "warden_keys_pending"
-	keysChainsMetricName  = "warden_keys_keychains"
+	keychainsMetricName  = "warden_keychains"
 	successStatus         = "success"
 	errorStatus           = "error"
 )
@@ -55,7 +55,7 @@ var eddsaKeys = prometheus.NewDesc(
 
 var pendingKeys = prometheus.NewDesc(
 	keysPendingMetricName,
-	"Returns the number of Pending keys existing in chain",
+	"Returns the number of pending KeyRequests existing in chain",
 	[]string{
 		"chain_id",
 		"status",
@@ -63,7 +63,7 @@ var pendingKeys = prometheus.NewDesc(
 	nil,
 )
 
-var keyChains = prometheus.NewDesc(
+var keychains = prometheus.NewDesc(
 	keysChainsMetricName,
 	"Returns the number of Keychains existing in chain",
 	[]string{
