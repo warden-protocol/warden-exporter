@@ -1,0 +1,34 @@
+---
+name: PR Validation
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  run-reviewdog:
+    name: Run ReviewDog
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: ReviewDog - GolangCI Lint
+        uses: reviewdog/action-golangci-lint@v2
+        with:
+          go_version_file: go.mod
+          tool_name: GolangCI Lint
+          golangci_lint_flags: --config=.golangci.yaml --timeout=10m
+          fail_on_error: true
+  run-tests:
+    name: Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version-file: go.mod
+      - name: Tests
+        run: make test-ci
