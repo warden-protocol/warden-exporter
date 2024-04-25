@@ -1,6 +1,6 @@
 BUILD_FOLDER = build
 DIST_FOLDER = dist
-GORELEASER_VERSION = v1.21.0
+GORELEASER_VERSION = v1.22.2
 DOCKER := $(shell which docker)
 PACKAGE_NAME = github.com/warden-protocol/warden-exporter
 
