@@ -40,7 +40,7 @@ func NewClient(cfg config.Config) (Client, error) {
 	return client, nil
 }
 
-// spaces metric
+// spaces metric.
 func (c Client) Spaces(ctx context.Context) (uint64, error) {
 	client := warden.NewQueryClient(c.conn)
 	req := warden.QuerySpacesRequest{Pagination: &query.PageRequest{
@@ -56,7 +56,7 @@ func (c Client) Spaces(ctx context.Context) (uint64, error) {
 	return spacesRes.Pagination.Total, nil
 }
 
-// keys metric
+// keys metric.
 func (c Client) Keys(ctx context.Context) (uint64, uint64, uint64, error) {
 	var (
 		// 	addressTypes []warden.AddressType
@@ -103,7 +103,7 @@ func (c Client) Keys(ctx context.Context) (uint64, uint64, uint64, error) {
 	return ecdsaKeys, eddsaKeys, pendingKeys, nil
 }
 
-// Keychains metric
+// Keychains metric.
 func (c Client) Keychains(ctx context.Context) (uint64, error) {
 	var key []byte
 
@@ -119,7 +119,7 @@ func (c Client) Keychains(ctx context.Context) (uint64, error) {
 	return keyChains.Pagination.Total, nil
 }
 
-// Intents
+// Intents.
 func (c Client) Intents(ctx context.Context) (uint64, error) {
 	var key []byte
 
@@ -135,7 +135,7 @@ func (c Client) Intents(ctx context.Context) (uint64, error) {
 	return intents.Pagination.Total, nil
 }
 
-// Actions
+// Actions.
 func (c Client) Actions(ctx context.Context) (uint64, error) {
 	var key []byte
 
@@ -151,7 +151,7 @@ func (c Client) Actions(ctx context.Context) (uint64, error) {
 	return actions.Pagination.Total, nil
 }
 
-// Accounts
+// Accounts.
 func (c Client) Accounts(ctx context.Context) (uint64, error) {
 	var key []byte
 

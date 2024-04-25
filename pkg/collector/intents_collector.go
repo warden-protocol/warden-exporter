@@ -17,6 +17,7 @@ const (
 	actionsMetricName = "warden_actions"
 )
 
+//nolint:gochecknoglobals // this is needed as it's used in multiple places
 var intents = prometheus.NewDesc(
 	intentsMetricName,
 	"Returns the number of Intents existing in chain",
@@ -27,6 +28,7 @@ var intents = prometheus.NewDesc(
 	nil,
 )
 
+//nolint:gochecknoglobals // this is needed as it's used in multiple places
 var actions = prometheus.NewDesc(
 	actionsMetricName,
 	"Returns the number of actions in the chain",

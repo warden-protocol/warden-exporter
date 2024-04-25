@@ -7,11 +7,13 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
+//nolint:gochecknoglobals // these globals are needed for global logging
 var (
 	logger *zap.Logger
 	level  zap.AtomicLevel
 )
 
+//nolint:gochecknoinits // this init function is needed for zap
 func init() {
 	var err error
 
