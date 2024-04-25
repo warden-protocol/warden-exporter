@@ -80,7 +80,7 @@ func (ic IntentCollector) Collect(ch chan<- prometheus.Metric) {
 		}...,
 	)
 
-	actionsAmount, err := client.Intents(ctx)
+	actionsAmount, err := client.Actions(ctx)
 	if err != nil {
 		status = errorStatus
 
