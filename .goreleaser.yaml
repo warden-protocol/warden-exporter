@@ -1,14 +1,14 @@
 ---
-project_name: relayer_exporter
+project_name: warden-exporter
 before:
   hooks:
     - go mod tidy
 env:
   - CGO_ENABLED=1
 builds:
-  - id: relayer_exporter-linux-amd64
-    main: ./cmd/relayer_exporter/relayer_exporter.go
-    binary: relayer_exporter
+  - id: warden-exporter-linux-amd64
+    main: ./cmd/warden-exporter/warden-exporter.go
+    binary: warden-exporter
     env:
       - CC=x86_64-linux-gnu-gcc
       - CXX=x86_64-linux-gnu-g++
@@ -30,9 +30,9 @@ builds:
       - netgo
       - muslc
 
-  - id: relayer_exporter-linux-arm64
-    main: ./cmd/relayer_exporter/relayer_exporter.go
-    binary: relayer_exporter
+  - id: warden-exporter-linux-arm64
+    main: ./cmd/warden-exporter/warden-exporter.go
+    binary: warden-exporter
     env:
       - CC=aarch64-linux-gnu-gcc
       - CXX=aarch64-linux-gnu-g++
@@ -54,9 +54,9 @@ builds:
       - netgo
       - muslc
 
-  - id: relayer_exporter-darwin-amd64
-    main: ./cmd/relayer_exporter/relayer_exporter.go
-    binary: relayer_exporter
+  - id: warden-exporter-darwin-amd64
+    main: ./cmd/warden-exporter/warden-exporter.go
+    binary: warden-exporter
     env:
       - CC=o64-clang
       - CGO_LDFLAGS=-L/lib
@@ -76,9 +76,9 @@ builds:
     tags:
       - netgo
 
-  - id: relayer_exporter-darwin-arm64
-    main: ./cmd/relayer_exporter/relayer_exporter.go
-    binary: relayer_exporter
+  - id: warden-exporter-darwin-arm64
+    main: ./cmd/warden-exporter/warden-exporter.go
+    binary: warden-exporter
     env:
       - CC=oa64-clang
       - CGO_LDFLAGS=-L/lib
@@ -99,10 +99,10 @@ builds:
       - netgo
 
 universal_binaries:
-  - id: relayer_exporter-darwin-all
+  - id: warden-exporter-darwin-all
     ids:
-      - relayer_exporter-darwin-amd64
-      - relayer_exporter-darwin-arm64
+      - warden-exporter-darwin-amd64
+      - warden-exporter-darwin-arm64
     replace: false
 
 dockers:
@@ -110,7 +110,7 @@ dockers:
     goos: linux
     goarch: amd64
     image_templates:
-      - "ghcr.io/archway-network/{{ .ProjectName }}:{{ .Version }}-amd64"
+      - "ghcr.io/warden-protocol/{{ .ProjectName }}:{{ .Version }}-amd64"
     build_flag_templates:
       - "--pull"
       - "--platform=linux/amd64"
@@ -122,7 +122,7 @@ dockers:
     goos: linux
     goarch: arm64
     image_templates:
-      - "ghcr.io/archway-network/{{ .ProjectName }}:{{ .Version }}-arm64v8"
+      - "ghcr.io/warden-protocol/{{ .ProjectName }}:{{ .Version }}-arm64v8"
     build_flag_templates:
       - "--pull"
       - "--platform=linux/arm64"
@@ -131,7 +131,7 @@ dockers:
       - "--label=org.opencontainers.image.revision={{.FullCommit}}"
       - "--label=org.opencontainers.image.version={{.Version}}"
 docker_manifests:
-  - name_template: ghcr.io/archway-network/{{ .ProjectName }}:{{ .Version }}
+  - name_template: ghcr.io/warden-protocol/{{ .ProjectName }}:{{ .Version }}
     image_templates:
-      - ghcr.io/archway-network/{{ .ProjectName }}:{{ .Version }}-amd64
-      - ghcr.io/archway-network/{{ .ProjectName }}:{{ .Version }}-arm64v8
+      - ghcr.io/warden-protocol/{{ .ProjectName }}:{{ .Version }}-amd64
+      - ghcr.io/warden-protocol/{{ .ProjectName }}:{{ .Version }}-arm64v8
