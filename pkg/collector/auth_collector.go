@@ -17,7 +17,7 @@ const (
 )
 
 var accounts = prometheus.NewDesc(
-	accountMetrciName,
+	accountMetricName,
 	"Returns the number of accounts existing in chain",
 	[]string{
 		"chain_id",

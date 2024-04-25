@@ -44,7 +44,7 @@ func NewClient(cfg config.Config) (Client, error) {
 func (c Client) Spaces(ctx context.Context) (uint64, error) {
 	client := warden.NewQueryClient(c.conn)
 	req := warden.QuerySpacesRequest{Pagination: &query.PageRequest{
-		Limit: 1,
+		Limit:      1,
 		CountTotal: true,
 	}}
 
@@ -59,21 +59,17 @@ func (c Client) Spaces(ctx context.Context) (uint64, error) {
 // keys metric
 func (c Client) Keys(ctx context.Context) (uint64, uint64, uint64, error) {
 	var (
-		addressTypes []warden.AddressType
-		pendingKeys  uint64
-		ecdsaKeys    uint64
-		eddsaKeys    uint64
-		key          []byte
+		// 	addressTypes []warden.AddressType
+		pendingKeys uint64
+		ecdsaKeys   uint64
+		eddsaKeys   uint64
+		key         []byte
 	)
 
 	client := warden.NewQueryClient(c.conn)
 
-	for _, k := range warden.AddressType_value {
-		addressTypes = append(addressTypes, warden.AddressType(k))
-	}
-
 	for {
-		req := warden.QueryAllKeysRequest{Pagination: &query.PageRequest{Key: key}, DeriveAddresses: addressTypes}
+		req := warden.QueryAllKeysRequest{Pagination: &query.PageRequest{Key: key}}
 
 		allKeys, err := client.AllKeys(ctx, &req)
 		if err != nil {

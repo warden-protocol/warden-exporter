@@ -18,7 +18,7 @@ const (
 	keysEcdsaMetricName   = "warden_keys_ecdsa"
 	keysEddsaMetricName   = "warden_keys_eddsa"
 	keysPendingMetricName = "warden_keys_pending"
-	keychainsMetricName  = "warden_keychains"
+	keychainsMetricName   = "warden_keychains"
 	successStatus         = "success"
 	errorStatus           = "error"
 )
@@ -64,7 +64,7 @@ var pendingKeys = prometheus.NewDesc(
 )
 
 var keychains = prometheus.NewDesc(
-	keysChainsMetricName,
+	keychainsMetricName,
 	"Returns the number of Keychains existing in chain",
 	[]string{
 		"chain_id",
@@ -82,7 +82,7 @@ func (w WardenCollector) Describe(ch chan<- *prometheus.Desc) {
 	ch <- ecdsaKeys
 	ch <- eddsaKeys
 	ch <- pendingKeys
-	ch <- keyChains
+	ch <- keychains
 }
 
 func (w WardenCollector) Collect(ch chan<- prometheus.Metric) {
@@ -151,7 +151,7 @@ func (w WardenCollector) Collect(ch chan<- prometheus.Metric) {
 		}...,
 	)
 
-	keyChainsAmount, err := client.KeyChains(ctx)
+	keyChainsAmount, err := client.Keychains(ctx)
 	if err != nil {
 		status = errorStatus
 
@@ -159,7 +159,7 @@ func (w WardenCollector) Collect(ch chan<- prometheus.Metric) {
 	}
 
 	ch <- prometheus.MustNewConstMetric(
-		keyChains,
+		keychains,
 		prometheus.GaugeValue,
 		float64(keyChainsAmount),
 		[]string{
