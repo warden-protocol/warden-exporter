@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/warden-protocol/warden-exporter/compare/v1.1.0...v1.1.1) (2024-04-25)
+
+
+### Bug Fixes
+
+* relayer exporter wrong tags ([62a1c0c](https://github.com/warden-protocol/warden-exporter/commit/62a1c0c52a1e888ec91a3bf945d9bba349d6478b))
+
 ## [1.1.0](https://github.com/warden-protocol/warden-exporter/compare/v1.0.0...v1.1.0) (2024-04-25)
 
 
