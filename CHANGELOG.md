@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.2](https://github.com/warden-protocol/warden-exporter/compare/v1.1.1...v1.1.2) (2024-04-25)
+
+
+### Bug Fixes
+
+* use correct method for retrieving actions count ([4415242](https://github.com/warden-protocol/warden-exporter/commit/4415242515be2c6ad602b2df96e6d8aa4b5af4a7))
+
 ## [1.1.1](https://github.com/warden-protocol/warden-exporter/compare/v1.1.0...v1.1.1) (2024-04-25)
 
 
