@@ -16,6 +16,7 @@ const (
 	accountMetricName = "warden_accounts"
 )
 
+//nolint:gochecknoglobals // this is needed as it's used in multiple places
 var accounts = prometheus.NewDesc(
 	accountMetricName,
 	"Returns the number of accounts existing in chain",

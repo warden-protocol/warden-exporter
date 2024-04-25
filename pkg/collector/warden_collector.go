@@ -23,6 +23,7 @@ const (
 	errorStatus           = "error"
 )
 
+//nolint:gochecknoglobals // this is needed as it's used in multiple places
 var spaces = prometheus.NewDesc(
 	spacesMetricName,
 	"Returns the number of Spaces existing in chain",
@@ -33,6 +34,7 @@ var spaces = prometheus.NewDesc(
 	nil,
 )
 
+//nolint:gochecknoglobals // this is needed as it's used in multiple places
 var ecdsaKeys = prometheus.NewDesc(
 	keysEcdsaMetricName,
 	"Returns the number of ECDSA keys existing in chain",
@@ -43,6 +45,7 @@ var ecdsaKeys = prometheus.NewDesc(
 	nil,
 )
 
+//nolint:gochecknoglobals // this is needed as it's used in multiple places
 var eddsaKeys = prometheus.NewDesc(
 	keysEddsaMetricName,
 	"Returns the number of EDDSA keys existing in chain",
@@ -53,6 +56,7 @@ var eddsaKeys = prometheus.NewDesc(
 	nil,
 )
 
+//nolint:gochecknoglobals // this is needed as it's used in multiple places
 var pendingKeys = prometheus.NewDesc(
 	keysPendingMetricName,
 	"Returns the number of pending KeyRequests existing in chain",
@@ -63,6 +67,7 @@ var pendingKeys = prometheus.NewDesc(
 	nil,
 )
 
+//nolint:gochecknoglobals // this is needed as it's used in multiple places
 var keychains = prometheus.NewDesc(
 	keychainsMetricName,
 	"Returns the number of Keychains existing in chain",

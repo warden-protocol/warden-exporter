@@ -25,7 +25,10 @@ type Config struct {
 }
 
 func (c Config) GRPCConn() (*grpc.ClientConn, error) {
-	transportCreds := grpc.WithTransportCredentials(credentials.NewTLS(&tls.Config{}))
+	tlsConfig := &tls.Config{
+		MinVersion: tls.VersionTLS12,
+	}
+	transportCreds := grpc.WithTransportCredentials(credentials.NewTLS(tlsConfig))
 
 	if !c.TLS {
 		transportCreds = grpc.WithTransportCredentials(insecure.NewCredentials())
