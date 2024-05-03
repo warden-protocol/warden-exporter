@@ -33,19 +33,28 @@ func main() {
 		log.Fatal(err.Error())
 	}
 
-	wardenCollector := collector.WardenCollector{
-		Cfg: cfg,
-	}
-	intentCollector := collector.IntentCollector{
-		Cfg: cfg,
-	}
-	authCollector := collector.AuthCollector{
-		Cfg: cfg,
+	if cfg.WardenMetrics {
+		wardenCollector := collector.WardenCollector{
+			Cfg: cfg,
+		}
+		intentCollector := collector.IntentCollector{
+			Cfg: cfg,
+		}
+		authCollector := collector.AuthCollector{
+			Cfg: cfg,
+		}
+
+		prometheus.MustRegister(wardenCollector)
+		prometheus.MustRegister(intentCollector)
+		prometheus.MustRegister(authCollector)
 	}
 
-	prometheus.MustRegister(wardenCollector)
-	prometheus.MustRegister(intentCollector)
-	prometheus.MustRegister(authCollector)
+	if cfg.ValidatorMetrics {
+		validatorCollector := collector.ValidatorsCollector{
+			Cfg: cfg,
+		}
+		prometheus.MustRegister(validatorCollector)
+	}
 
 	mux := http.NewServeMux()
 	mux.Handle("/metrics", promhttp.Handler())
