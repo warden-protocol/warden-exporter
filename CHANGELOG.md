@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/warden-protocol/warden-exporter/compare/v1.1.2...v1.2.0) (2024-05-03)
+
+
+### Features
+
+* **validator:** adding new metric for validator export ([#8](https://github.com/warden-protocol/warden-exporter/issues/8)) ([f45ce70](https://github.com/warden-protocol/warden-exporter/commit/f45ce70047d02c1761769184214bd5837ded6b4c))
+
 ## [1.1.2](https://github.com/warden-protocol/warden-exporter/compare/v1.1.1...v1.1.2) (2024-04-25)
 
 
