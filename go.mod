@@ -3,6 +3,7 @@ module github.com/warden-protocol/warden-exporter
 go 1.22
 
 require (
+	cosmossdk.io/api v0.7.4
 	github.com/caarlos0/env/v10 v10.0.0
 	github.com/cosmos/cosmos-sdk v0.50.6
 	github.com/prometheus/client_golang v1.19.0
@@ -12,7 +13,6 @@ require (
 )
 
 require (
-	cosmossdk.io/api v0.7.4 // indirect
 	cosmossdk.io/collections v0.4.0 // indirect
 	cosmossdk.io/core v0.11.0 // indirect
 	cosmossdk.io/depinject v1.0.0-alpha.4 // indirect
