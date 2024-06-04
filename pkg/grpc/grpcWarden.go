@@ -87,6 +87,42 @@ func (c Client) Keychains(ctx context.Context) (uint64, error) {
 	return keyChains.Pagination.Total, nil
 }
 
+func (c Client) KeyChain(ctx context.Context, id uint64) (warden.Keychain, error) {
+	client := warden.NewQueryClient(c.conn)
+	req := warden.QueryKeychainByIdRequest{Id: id}
+	keychain, err := client.KeychainById(ctx, &req)
+	if err != nil {
+		return warden.Keychain{}, endpointError(err.Error())
+	}
+	return *keychain.Keychain, nil
+}
+
+func (c Client) KeychainRequests(ctx context.Context, id uint64) (uint64, error) {
+	var key []byte
+	client := warden.NewQueryClient(c.conn)
+	req := warden.QueryKeyRequestsRequest{KeychainId: id, Pagination: &query.PageRequest{Key: key}}
+
+	keychainRequests, err := client.KeyRequests(ctx, &req)
+	if err != nil {
+		return 0, endpointError(err.Error())
+	}
+
+	return keychainRequests.Pagination.Total, nil
+}
+
+func (c Client) KeychainSignatureRequests(ctx context.Context, id uint64) (uint64, error) {
+	var key []byte
+	client := warden.NewQueryClient(c.conn)
+	req := warden.QuerySignatureRequestsRequest{KeychainId: id, Pagination: &query.PageRequest{Key: key}}
+
+	keychainRequests, err := client.SignatureRequests(ctx, &req)
+	if err != nil {
+		return 0, endpointError(err.Error())
+	}
+
+	return keychainRequests.Pagination.Total, nil
+}
+
 // Intents.
 func (c Client) Intents(ctx context.Context) (uint64, error) {
 	var key []byte

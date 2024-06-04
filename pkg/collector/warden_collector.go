@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/prometheus/client_golang/prometheus"
+	"github.com/warden-protocol/wardenprotocol/warden/x/warden/types/v1beta2"
 	"go.uber.org/zap"
 
 	"github.com/warden-protocol/warden-exporter/pkg/config"
@@ -14,13 +15,16 @@ import (
 )
 
 const (
-	spacesMetricName      = "warden_spaces"
-	keysEcdsaMetricName   = "warden_keys_ecdsa"
-	keysEddsaMetricName   = "warden_keys_eddsa"
-	keysPendingMetricName = "warden_keys_pending"
-	keychainsMetricName   = "warden_keychains"
-	successStatus         = "success"
-	errorStatus           = "error"
+	spacesMetricName              = "warden_spaces"
+	keysEcdsaMetricName           = "warden_keys_ecdsa"
+	keysEddsaMetricName           = "warden_keys_eddsa"
+	keysPendingMetricName         = "warden_keys_pending"
+	keychainsMetricName           = "warden_keychains"
+	keychainRequestsName          = "warden_keychain_requests"
+	keychainName                  = "warden_keychain"
+	keychainSignatureRequestsName = "warden_keychain_signature_requests"
+	successStatus                 = "success"
+	errorStatus                   = "error"
 )
 
 //nolint:gochecknoglobals // this is needed as it's used in multiple places
@@ -78,6 +82,49 @@ var keychains = prometheus.NewDesc(
 	nil,
 )
 
+//nolint:gochecknoglobals // this is needed as it's used in multiple places
+var keychainRequests = prometheus.NewDesc(
+	keychainRequestsName,
+	"Returns the number of Keychain requests per Keychain",
+	[]string{
+		"chain_id",
+		"keychain_id",
+		"keychain_name",
+		"status",
+	},
+	nil,
+)
+
+//nolint:gochecknoglobals // this is needed as it's used in multiple places
+var keychain = prometheus.NewDesc(
+	keychainName,
+	"Returns keychain information",
+	[]string{
+		"chain_id",
+		"keychain_id",
+		"description",
+		"admins",
+		"parties",
+		"admin_intent_id",
+		"fees",
+		"status",
+	},
+	nil,
+)
+
+//nolint:gochecknoglobals // this is needed as it's used in multiple places
+var keychainSignatureRequests = prometheus.NewDesc(
+	keychainSignatureRequestsName,
+	"Returns Keychain Signature Requests",
+	[]string{
+		"chain_id",
+		"keychain_id",
+		"keychain_name",
+		"status",
+	},
+	nil,
+)
+
 type WardenCollector struct {
 	Cfg config.Config
 }
@@ -88,6 +135,7 @@ func (w WardenCollector) Describe(ch chan<- *prometheus.Desc) {
 	ch <- eddsaKeys
 	ch <- pendingKeys
 	ch <- keychains
+	ch <- keychainRequests
 }
 
 func (w WardenCollector) Collect(ch chan<- prometheus.Metric) {
@@ -172,6 +220,74 @@ func (w WardenCollector) Collect(ch chan<- prometheus.Metric) {
 			status,
 		}...,
 	)
+
+	var keychainRequestsAmount uint64
+	for x := 1; x <= int(keyChainsAmount); x++ {
+		var keychainResponse v1beta2.Keychain
+		status = successStatus
+		keychainRequestsAmount, err = client.KeychainRequests(ctx, uint64(x))
+		if err != nil {
+			log.Error(err.Error())
+			status = errorStatus
+		}
+		keychainResponse, err = client.KeyChain(ctx, uint64(x))
+		if err != nil {
+			log.Error(err.Error())
+			status = errorStatus
+		}
+		ch <- prometheus.MustNewConstMetric(
+			keychainRequests,
+			prometheus.GaugeValue,
+			float64(keychainRequestsAmount),
+			[]string{
+				w.Cfg.ChainID,
+				fmt.Sprintf("%d", x),
+				keychainResponse.Description,
+				status,
+			}...,
+		)
+
+		var boolStatus float64
+		if keychainResponse.IsActive {
+			boolStatus = 1
+		} else {
+			boolStatus = 0
+		}
+		ch <- prometheus.MustNewConstMetric(
+			keychain,
+			prometheus.GaugeValue,
+			boolStatus,
+			[]string{
+				w.Cfg.ChainID,
+				fmt.Sprintf("%d", keychainResponse.Id),
+				keychainResponse.Description,
+				fmt.Sprintf("%v", keychainResponse.Admins),
+				fmt.Sprintf("%v", keychainResponse.Parties),
+				fmt.Sprintf("%v", keychainResponse.AdminIntentId),
+				keychainResponse.Fees.String(),
+				status,
+			}...,
+		)
+
+		// Signature Requests
+		var keychainSignaturesResponse uint64
+		keychainSignaturesResponse, err = client.KeychainSignatureRequests(ctx, uint64(x))
+		if err != nil {
+			log.Error(err.Error())
+			status = errorStatus
+		}
+		ch <- prometheus.MustNewConstMetric(
+			keychainSignatureRequests,
+			prometheus.GaugeValue,
+			float64(keychainSignaturesResponse),
+			[]string{
+				w.Cfg.ChainID,
+				fmt.Sprintf("%d", keychainResponse.Id),
+				keychainResponse.Description,
+				status,
+			}...,
+		)
+	}
 
 	log.Debug("Stop collecting", zap.String("metric", spacesMetricName))
 }
