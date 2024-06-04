@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0](https://github.com/warden-protocol/warden-exporter/compare/v1.2.0...v1.3.0) (2024-06-04)
+
+
+### Features
+
+* new keychain metrics ([#12](https://github.com/warden-protocol/warden-exporter/issues/12)) ([6465a04](https://github.com/warden-protocol/warden-exporter/commit/6465a04b1e4f5eb98547ba89f61ae1250d836809))
+
 ## [1.2.0](https://github.com/warden-protocol/warden-exporter/compare/v1.1.2...v1.2.0) (2024-05-03)
 
 
