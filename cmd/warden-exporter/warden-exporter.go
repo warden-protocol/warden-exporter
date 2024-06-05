@@ -43,10 +43,14 @@ func main() {
 		authCollector := collector.AuthCollector{
 			Cfg: cfg,
 		}
+		walletCollector := collector.WalletBalanceCollector{
+			Cfg: cfg,
+		}
 
 		prometheus.MustRegister(wardenCollector)
 		prometheus.MustRegister(intentCollector)
 		prometheus.MustRegister(authCollector)
+		prometheus.MustRegister(walletCollector)
 	}
 
 	if cfg.ValidatorMetrics {
