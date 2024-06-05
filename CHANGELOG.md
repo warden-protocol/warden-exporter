@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.0](https://github.com/warden-protocol/warden-exporter/compare/v1.3.0...v1.4.0) (2024-06-05)
+
+
+### Features
+
+* add wallet metrics ([#14](https://github.com/warden-protocol/warden-exporter/issues/14)) ([7380145](https://github.com/warden-protocol/warden-exporter/commit/73801459d317d711b2f48a565b12bf5fe0e03dab))
+
 ## [1.3.0](https://github.com/warden-protocol/warden-exporter/compare/v1.2.0...v1.3.0) (2024-06-04)
 
 
