@@ -24,6 +24,8 @@ type Config struct {
 	ChainID          string `env:"CHAIN_ID" envDefault:"buenavista-1"`
 	WardenMetrics    bool   `env:"WARDEN_METRICS" envDefault:"true"`
 	ValidatorMetrics bool   `env:"VALIDATOR_METRICS" envDefault:"true"`
+	WalletAddresses  string `env:"WALLET_ADDRESSES" envDefault:""`
+	Denom            string `env:"DENOM" envDefault:"uward"`
 }
 
 func (c Config) GRPCConn() (*grpc.ClientConn, error) {
