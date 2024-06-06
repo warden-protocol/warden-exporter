@@ -26,6 +26,11 @@ type Config struct {
 	ValidatorMetrics bool   `env:"VALIDATOR_METRICS" envDefault:"true"`
 	WalletAddresses  string `env:"WALLET_ADDRESSES" envDefault:""`
 	Denom            string `env:"DENOM" envDefault:"uward"`
+	WarpMetrics      bool   `env:"WARP_METRICS" envDefault:"true"`
+	WarpDB           string `env:"WARP_DATABASE" envDefault:""`
+	WarpDBUser       string `env:"WARP_DATABASE_USER" envDefault:""`
+	WarpDBPass       string `env:"WARP_DATABASE_PASS" envDefault:""`
+	WarpDBHost       string `env:"WARP_DATABASE_HOST" envDefault:""`
 }
 
 func (c Config) GRPCConn() (*grpc.ClientConn, error) {

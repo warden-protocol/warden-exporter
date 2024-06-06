@@ -6,6 +6,7 @@ require (
 	cosmossdk.io/api v0.7.4
 	github.com/caarlos0/env/v10 v10.0.0
 	github.com/cosmos/cosmos-sdk v0.50.6
+	github.com/go-sql-driver/mysql v1.4.0
 	github.com/prometheus/client_golang v1.19.0
 	github.com/warden-protocol/wardenprotocol v0.3.0
 	go.uber.org/zap v1.27.0
@@ -150,6 +151,7 @@ require (
 	golang.org/x/sys v0.19.0 // indirect
 	golang.org/x/term v0.19.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
+	google.golang.org/appengine v1.6.8 // indirect
 	google.golang.org/genproto v0.0.0-20240227224415-6ceb2ff114de // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20240325203815-454cdb8f5daa // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20240401170217-c3f982113cda // indirect

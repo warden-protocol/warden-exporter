@@ -60,6 +60,13 @@ func main() {
 		prometheus.MustRegister(validatorCollector)
 	}
 
+	if cfg.WarpMetrics {
+		warpCollector := collector.WarpCollector{
+			Cfg: cfg,
+		}
+		prometheus.MustRegister(warpCollector)
+	}
+
 	mux := http.NewServeMux()
 	mux.Handle("/metrics", promhttp.Handler())
 
