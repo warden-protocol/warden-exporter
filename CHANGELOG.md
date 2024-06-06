@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.0](https://github.com/warden-protocol/warden-exporter/compare/v1.4.0...v1.5.0) (2024-06-06)
+
+
+### Features
+
+* add warp metrics ([#16](https://github.com/warden-protocol/warden-exporter/issues/16)) ([00546bf](https://github.com/warden-protocol/warden-exporter/commit/00546bf4236bc6280c56f62cd30f6f5c9a30211b))
+
 ## [1.4.0](https://github.com/warden-protocol/warden-exporter/compare/v1.3.0...v1.4.0) (2024-06-05)
 
 
