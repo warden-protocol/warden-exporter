@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.6.1](https://github.com/warden-protocol/warden-exporter/compare/v1.6.0...v1.6.1) (2024-06-18)
+
+
+### Bug Fixes
+
+* timeouts ([#20](https://github.com/warden-protocol/warden-exporter/issues/20)) ([3e7d399](https://github.com/warden-protocol/warden-exporter/commit/3e7d39968be0edb9e39d510ebc801fd74d270b22))
+
 ## [1.6.0](https://github.com/warden-protocol/warden-exporter/compare/v1.5.0...v1.6.0) (2024-06-18)
 
 
