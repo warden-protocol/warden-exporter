@@ -46,28 +46,29 @@ func main() {
 			Cfg: cfg,
 		}
 
-		prometheus.MustRegister(wardenCollector)
-		prometheus.MustRegister(intentCollector)
-		prometheus.MustRegister(authCollector)
-		prometheus.MustRegister(walletCollector)
+		go prometheus.MustRegister(wardenCollector)
+		go prometheus.MustRegister(intentCollector)
+		go prometheus.MustRegister(authCollector)
+		go prometheus.MustRegister(walletCollector)
 	}
 
 	if cfg.ValidatorMetrics {
 		validatorCollector := collector.ValidatorsCollector{
 			Cfg: cfg,
 		}
-		prometheus.MustRegister(validatorCollector)
+		go prometheus.MustRegister(validatorCollector)
 	}
 
 	if cfg.WarpMetrics {
 		warpCollector := collector.WarpCollector{
 			Cfg: cfg,
 		}
-		prometheus.MustRegister(warpCollector)
+		go prometheus.MustRegister(warpCollector)
 	}
 
 	mux := http.NewServeMux()
 	mux.Handle("/metrics", promhttp.Handler())
+	mux.HandleFunc("/healthz", healthCheckHandler)
 
 	addr := fmt.Sprintf(":%d", *port)
 
@@ -82,5 +83,13 @@ func main() {
 
 	if err := srv.ListenAndServe(); err != nil {
 		log.Fatal(err.Error())
+	}
+}
+
+// healthCheckHandler handles the /healthz endpoint.
+func healthCheckHandler(w http.ResponseWriter, _ *http.Request) {
+	w.WriteHeader(http.StatusOK)
+	if _, err := w.Write([]byte("OK")); err != nil {
+		log.Error(err.Error())
 	}
 }
