@@ -17,7 +17,6 @@ import (
 
 const (
 	defaultPort = 8081
-	timeout     = 10
 )
 
 func main() {
@@ -75,8 +74,8 @@ func main() {
 	srv := &http.Server{
 		Addr:         addr,
 		Handler:      mux,
-		ReadTimeout:  timeout * time.Second,
-		WriteTimeout: timeout * time.Second,
+		ReadTimeout:  time.Duration(cfg.TTL) * time.Second,
+		WriteTimeout: time.Duration(cfg.TTL) * time.Second,
 	}
 
 	log.Info(fmt.Sprintf("Starting server on addr: %s", addr))

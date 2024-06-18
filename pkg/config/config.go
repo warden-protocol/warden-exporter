@@ -21,6 +21,7 @@ type Config struct {
 	Addr             string `env:"GRPC_ADDR" envDefault:"grpc.buenavista.wardenprotocol.org:443"`
 	TLS              bool   `env:"GRPC_TLS_ENABLED" envDefault:"true"`
 	Timeout          int    `env:"GRPC_TIMEOUT_SECONDS" envDefault:"15"`
+	TTL              int    `env:"TTL" envDefault:"30"`
 	ChainID          string `env:"CHAIN_ID" envDefault:"buenavista-1"`
 	WardenMetrics    bool   `env:"WARDEN_METRICS" envDefault:"true"`
 	ValidatorMetrics bool   `env:"VALIDATOR_METRICS" envDefault:"true"`
