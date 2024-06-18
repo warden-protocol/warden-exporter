@@ -136,6 +136,8 @@ func (w WardenCollector) Describe(ch chan<- *prometheus.Desc) {
 	ch <- pendingKeys
 	ch <- keychains
 	ch <- keychainRequests
+	ch <- keychain
+	ch <- keychainSignatureRequests
 }
 
 func (w WardenCollector) Collect(ch chan<- prometheus.Metric) {
@@ -289,5 +291,5 @@ func (w WardenCollector) Collect(ch chan<- prometheus.Metric) {
 		)
 	}
 
-	log.Debug("Stop collecting", zap.String("metric", spacesMetricName))
+	log.Info("Stop collecting", zap.String("metric", spacesMetricName))
 }

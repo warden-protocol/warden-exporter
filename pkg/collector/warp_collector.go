@@ -6,6 +6,7 @@ import (
 
 	_ "github.com/go-sql-driver/mysql" // mysql driver
 	"github.com/prometheus/client_golang/prometheus"
+	"go.uber.org/zap"
 
 	"github.com/warden-protocol/warden-exporter/pkg/config"
 	log "github.com/warden-protocol/warden-exporter/pkg/logger"
@@ -114,6 +115,7 @@ func (w WarpCollector) Collect(ch chan<- prometheus.Metric) {
 			}...,
 		)
 	}
+	log.Info("Stop collecting", zap.String("metric", "warp"))
 }
 
 func queryWarpUsers(db *sql.DB) (int, error) {
