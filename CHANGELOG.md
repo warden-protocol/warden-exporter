@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.6.0](https://github.com/warden-protocol/warden-exporter/compare/v1.5.0...v1.6.0) (2024-06-18)
+
+
+### Features
+
+* add TTL for server possibility ([#18](https://github.com/warden-protocol/warden-exporter/issues/18)) ([6e348b9](https://github.com/warden-protocol/warden-exporter/commit/6e348b90c37c87b153fa2729742e89177b4b4f0e))
+
 ## [1.5.0](https://github.com/warden-protocol/warden-exporter/compare/v1.4.0...v1.5.0) (2024-06-06)
 
 
