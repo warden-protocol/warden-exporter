@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.7.0](https://github.com/warden-protocol/warden-exporter/compare/v1.6.1...v1.7.0) (2024-06-26)
+
+
+### Features
+
+* add env file support ([#22](https://github.com/warden-protocol/warden-exporter/issues/22)) ([afe6b62](https://github.com/warden-protocol/warden-exporter/commit/afe6b625249b5deb4573eaf85490a5cace5d138a))
+
 ## [1.6.1](https://github.com/warden-protocol/warden-exporter/compare/v1.6.0...v1.6.1) (2024-06-18)
 
 
