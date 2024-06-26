@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/caarlos0/env/v10"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 
@@ -15,22 +14,16 @@ import (
 	log "github.com/warden-protocol/warden-exporter/pkg/logger"
 )
 
-const (
-	defaultPort = 8081
-)
-
 func main() {
-	port := flag.Int("p", defaultPort, "Server port")
+	cfg, err := config.LoadConfig()
+	if err != nil {
+		log.Fatal(err.Error())
+	}
 	logLevel := log.LevelFlag()
 
 	flag.Parse()
 
 	log.SetLevel(*logLevel)
-
-	cfg := config.Config{}
-	if err := env.Parse(&cfg); err != nil {
-		log.Fatal(err.Error())
-	}
 
 	if cfg.WardenMetrics {
 		wardenCollector := collector.WardenCollector{
@@ -70,7 +63,7 @@ func main() {
 	mux.Handle("/metrics", promhttp.Handler())
 	mux.HandleFunc("/healthz", healthCheckHandler)
 
-	addr := fmt.Sprintf(":%d", *port)
+	addr := fmt.Sprintf(":%s", cfg.Port)
 
 	srv := &http.Server{
 		Addr:         addr,
@@ -81,7 +74,7 @@ func main() {
 
 	log.Info(fmt.Sprintf("Starting server on addr: %s", addr))
 
-	if err := srv.ListenAndServe(); err != nil {
+	if err = srv.ListenAndServe(); err != nil {
 		log.Fatal(err.Error())
 	}
 }
