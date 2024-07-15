@@ -7,7 +7,6 @@ import (
 
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/warden-protocol/wardenprotocol/warden/x/warden/types/v1beta2"
-	"go.uber.org/zap"
 
 	"github.com/warden-protocol/warden-exporter/pkg/config"
 	"github.com/warden-protocol/warden-exporter/pkg/grpc"
@@ -290,6 +289,4 @@ func (w WardenCollector) Collect(ch chan<- prometheus.Metric) {
 			}...,
 		)
 	}
-
-	log.Info("Stop collecting", zap.String("metric", spacesMetricName))
 }

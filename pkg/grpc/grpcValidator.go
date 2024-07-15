@@ -25,6 +25,7 @@ const (
 )
 
 func (c Client) SignigInfos(ctx context.Context) ([]slashing.ValidatorSigningInfo, error) {
+	log.Info("grpc: fetching signing infos")
 	infos := []slashing.ValidatorSigningInfo{}
 	key := []byte{}
 	client := slashing.NewQueryClient(c.conn)
@@ -55,6 +56,7 @@ func (c Client) SignigInfos(ctx context.Context) ([]slashing.ValidatorSigningInf
 	}
 
 	log.Debug(fmt.Sprintf("SigningInfos: %d", len(infos)))
+	log.Info("grpc: fetching signing infos complete")
 
 	return infos, nil
 }
@@ -62,6 +64,7 @@ func (c Client) SignigInfos(ctx context.Context) ([]slashing.ValidatorSigningInf
 func (c Client) Validators(ctx context.Context) ([]staking.Validator, error) {
 	vals := []staking.Validator{}
 	key := []byte{}
+	log.Info("grpc: fetching validators")
 
 	// https://github.com/cosmos/cosmos-sdk/issues/8045#issuecomment-829142440
 	encCfg := testutil.MakeTestEncodingConfig()
@@ -101,6 +104,7 @@ func (c Client) Validators(ctx context.Context) ([]staking.Validator, error) {
 		}
 	}
 
+	log.Info("grpc: fetching validators complete")
 	log.Debug(fmt.Sprintf("Validators: %d", len(vals)))
 
 	return vals, nil
@@ -127,6 +131,7 @@ func (c Client) valConsMap(vals []staking.Validator) (map[string]staking.Validat
 }
 
 func SigningValidators(ctx context.Context, cfg config.Config) ([]types.Validator, error) {
+	log.Info("grpc: fetching signing validators")
 	sVals := []types.Validator{}
 
 	client, err := NewClient(cfg)
@@ -180,10 +185,12 @@ func SigningValidators(ctx context.Context, cfg config.Config) ([]types.Validato
 		})
 	}
 
+	log.Info("grpc: fetching signing validators complete")
 	return sVals, nil
 }
 
 func LatestBlockHeight(ctx context.Context, cfg config.Config) (int64, error) {
+	log.Info("grpc: fetching latest block height")
 	client, err := NewClient(cfg)
 	if err != nil {
 		log.Error(err.Error())
@@ -210,6 +217,7 @@ func LatestBlockHeight(ctx context.Context, cfg config.Config) (int64, error) {
 
 	height := blockResp.GetBlock().Header.Height
 	log.Debug(fmt.Sprintf("Latest height: %d", height))
+	log.Info("grpc: fetching latest block height complete")
 
 	return height, nil
 }

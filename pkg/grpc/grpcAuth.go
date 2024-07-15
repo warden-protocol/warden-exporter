@@ -5,10 +5,13 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/types/query"
 	auth "github.com/cosmos/cosmos-sdk/x/auth/types"
+
+	log "github.com/warden-protocol/warden-exporter/pkg/logger"
 )
 
 // Accounts.
 func (c Client) Accounts(ctx context.Context) (uint64, error) {
+	log.Info("grpc: fetching accounts")
 	var key []byte
 
 	client := auth.NewQueryClient(c.conn)
@@ -20,5 +23,6 @@ func (c Client) Accounts(ctx context.Context) (uint64, error) {
 		return 0, endpointError(err.Error())
 	}
 
+	log.Info("grpc: fetching accounts complete")
 	return accounts.Pagination.Total, nil
 }
