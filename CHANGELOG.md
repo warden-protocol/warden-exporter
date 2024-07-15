@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.8.0](https://github.com/warden-protocol/warden-exporter/compare/v1.7.0...v1.8.0) (2024-07-15)
+
+
+### Features
+
+* concurrency on metrics ([#24](https://github.com/warden-protocol/warden-exporter/issues/24)) ([dcb0d6c](https://github.com/warden-protocol/warden-exporter/commit/dcb0d6ce8a42ee2d86436378cafd8e7286402e9e))
+
 ## [1.7.0](https://github.com/warden-protocol/warden-exporter/compare/v1.6.1...v1.7.0) (2024-06-26)
 
 
