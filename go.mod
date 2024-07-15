@@ -8,6 +8,7 @@ require (
 	github.com/cosmos/cosmos-sdk v0.50.6
 	github.com/go-sql-driver/mysql v1.4.0
 	github.com/prometheus/client_golang v1.19.0
+	github.com/spf13/viper v1.18.2
 	github.com/warden-protocol/wardenprotocol v0.3.0
 	go.uber.org/zap v1.27.0
 	google.golang.org/grpc v1.63.2
@@ -133,7 +134,6 @@ require (
 	github.com/spf13/cast v1.6.0 // indirect
 	github.com/spf13/cobra v1.8.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
-	github.com/spf13/viper v1.18.2 // indirect
 	github.com/stretchr/testify v1.9.0 // indirect
 	github.com/subosito/gotenv v1.6.0 // indirect
 	github.com/supranational/blst v0.3.11 // indirect

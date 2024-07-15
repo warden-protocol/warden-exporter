@@ -8,6 +8,10 @@ import (
 	warden "github.com/warden-protocol/wardenprotocol/warden/x/warden/types/v1beta2"
 )
 
+const (
+	keyPageLimit = 200000
+)
+
 // spaces metric.
 func (c Client) Spaces(ctx context.Context) (uint64, error) {
 	client := warden.NewQueryClient(c.conn)
@@ -37,7 +41,7 @@ func (c Client) Keys(ctx context.Context) (uint64, uint64, uint64, error) {
 	client := warden.NewQueryClient(c.conn)
 
 	for {
-		req := warden.QueryAllKeysRequest{Pagination: &query.PageRequest{Key: key}}
+		req := warden.QueryAllKeysRequest{Pagination: &query.PageRequest{Key: key, Limit: keyPageLimit}}
 
 		allKeys, err := client.AllKeys(ctx, &req)
 		if err != nil {

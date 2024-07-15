@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/prometheus/client_golang/prometheus"
-	"go.uber.org/zap"
 
 	"github.com/warden-protocol/warden-exporter/pkg/config"
 	"github.com/warden-protocol/warden-exporter/pkg/grpc"
@@ -55,13 +54,9 @@ func (vc ValidatorsCollector) Collect(ch chan<- prometheus.Metric) {
 	if err != nil {
 		log.Error(fmt.Sprintf("error getting signing validators: %s", err))
 	} else {
-		log.Debug("Start collecting", zap.String("metric", missedBlocksMetricName))
-
 		for _, m := range vc.missedBlocksMetrics(vals) {
 			ch <- m
 		}
-
-		log.Debug("Stop collecting", zap.String("metric", missedBlocksMetricName))
 	}
 }
 
