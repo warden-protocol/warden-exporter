@@ -6,13 +6,14 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/query"
 	intent "github.com/warden-protocol/wardenprotocol/warden/x/intent/types"
 	warden "github.com/warden-protocol/wardenprotocol/warden/x/warden/types/v1beta2"
+)
 
-	log "github.com/warden-protocol/warden-exporter/pkg/logger"
+const (
+	keyPageLimit = 200000
 )
 
 // spaces metric.
 func (c Client) Spaces(ctx context.Context) (uint64, error) {
-	log.Info("grpc: fetching spaces")
 	client := warden.NewQueryClient(c.conn)
 	req := warden.QuerySpacesRequest{Pagination: &query.PageRequest{
 		Limit:      1,
@@ -24,13 +25,11 @@ func (c Client) Spaces(ctx context.Context) (uint64, error) {
 		return 0, endpointError(err.Error())
 	}
 
-	log.Info("grpc: fetching spaces complete")
 	return spacesRes.Pagination.Total, nil
 }
 
 // keys metric.
 func (c Client) Keys(ctx context.Context) (uint64, uint64, uint64, error) {
-	log.Info("grpc: fetching keys")
 	var (
 		// 	addressTypes []warden.AddressType
 		pendingKeys uint64
@@ -42,7 +41,7 @@ func (c Client) Keys(ctx context.Context) (uint64, uint64, uint64, error) {
 	client := warden.NewQueryClient(c.conn)
 
 	for {
-		req := warden.QueryAllKeysRequest{Pagination: &query.PageRequest{Key: key}}
+		req := warden.QueryAllKeysRequest{Pagination: &query.PageRequest{Key: key, Limit: keyPageLimit}}
 
 		allKeys, err := client.AllKeys(ctx, &req)
 		if err != nil {
@@ -73,13 +72,11 @@ func (c Client) Keys(ctx context.Context) (uint64, uint64, uint64, error) {
 		}
 	}
 
-	log.Info("grpc: fetching keys complete")
 	return ecdsaKeys, eddsaKeys, pendingKeys, nil
 }
 
 // Keychains metric.
 func (c Client) Keychains(ctx context.Context) (uint64, error) {
-	log.Info("grpc: fetching keychains")
 	var key []byte
 
 	client := warden.NewQueryClient(c.conn)
@@ -91,24 +88,20 @@ func (c Client) Keychains(ctx context.Context) (uint64, error) {
 		return 0, endpointError(err.Error())
 	}
 
-	log.Info("grpc: fetching keychains complete")
 	return keyChains.Pagination.Total, nil
 }
 
 func (c Client) KeyChain(ctx context.Context, id uint64) (warden.Keychain, error) {
-	log.Info("grpc: fetching keychain")
 	client := warden.NewQueryClient(c.conn)
 	req := warden.QueryKeychainByIdRequest{Id: id}
 	keychain, err := client.KeychainById(ctx, &req)
 	if err != nil {
 		return warden.Keychain{}, endpointError(err.Error())
 	}
-	log.Info("grpc: fetching keychain complete")
 	return *keychain.Keychain, nil
 }
 
 func (c Client) KeychainRequests(ctx context.Context, id uint64) (uint64, error) {
-	log.Info("grpc: fetching keychain requests")
 	var key []byte
 	client := warden.NewQueryClient(c.conn)
 	req := warden.QueryKeyRequestsRequest{KeychainId: id, Pagination: &query.PageRequest{Key: key}}
@@ -118,12 +111,10 @@ func (c Client) KeychainRequests(ctx context.Context, id uint64) (uint64, error)
 		return 0, endpointError(err.Error())
 	}
 
-	log.Info("grpc: fetching keychain requests complete")
 	return keychainRequests.Pagination.Total, nil
 }
 
 func (c Client) KeychainSignatureRequests(ctx context.Context, id uint64) (uint64, error) {
-	log.Info("grpc: fetching keychain signature requests")
 	var key []byte
 	client := warden.NewQueryClient(c.conn)
 	req := warden.QuerySignatureRequestsRequest{KeychainId: id, Pagination: &query.PageRequest{Key: key}}
@@ -133,13 +124,11 @@ func (c Client) KeychainSignatureRequests(ctx context.Context, id uint64) (uint6
 		return 0, endpointError(err.Error())
 	}
 
-	log.Info("grpc: fetching keychain signature requests complete")
 	return keychainRequests.Pagination.Total, nil
 }
 
 // Intents.
 func (c Client) Intents(ctx context.Context) (uint64, error) {
-	log.Info("grpc: fetching intents")
 	var key []byte
 
 	client := intent.NewQueryClient(c.conn)
@@ -151,14 +140,12 @@ func (c Client) Intents(ctx context.Context) (uint64, error) {
 		return 0, endpointError(err.Error())
 	}
 
-	log.Info("grpc: fetching intents complete")
 	return intents.Pagination.Total, nil
 }
 
 // Actions.
 func (c Client) Actions(ctx context.Context) (uint64, error) {
 	var key []byte
-	log.Info("grpc: fetching actions")
 
 	client := intent.NewQueryClient(c.conn)
 
@@ -169,6 +156,5 @@ func (c Client) Actions(ctx context.Context) (uint64, error) {
 		return 0, endpointError(err.Error())
 	}
 
-	log.Info("grpc: fetching actions complete")
 	return actions.Pagination.Total, nil
 }

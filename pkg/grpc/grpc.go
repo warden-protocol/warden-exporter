@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 
-	"go.uber.org/zap"
 	"google.golang.org/grpc"
 
 	"github.com/warden-protocol/warden-exporter/pkg/config"

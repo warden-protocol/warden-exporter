@@ -3,6 +3,7 @@ package collector
 import (
 	"context"
 	"fmt"
+	"sync"
 	"time"
 
 	"github.com/prometheus/client_golang/prometheus"
@@ -24,6 +25,7 @@ const (
 	keychainSignatureRequestsName = "warden_keychain_signature_requests"
 	successStatus                 = "success"
 	errorStatus                   = "error"
+	collectorCount                = 3
 )
 
 //nolint:gochecknoglobals // this is needed as it's used in multiple places
@@ -139,21 +141,15 @@ func (w WardenCollector) Describe(ch chan<- *prometheus.Desc) {
 	ch <- keychainSignatureRequests
 }
 
-func (w WardenCollector) Collect(ch chan<- prometheus.Metric) {
-	ctx, cancel := context.WithTimeout(
-		context.Background(),
-		time.Duration(w.Cfg.Timeout)*time.Second,
-	)
-
-	defer cancel()
-
+func (w WardenCollector) collectSpaces(
+	ctx context.Context,
+	client *grpc.Client,
+	ch chan<- prometheus.Metric,
+	wg *sync.WaitGroup,
+) {
+	log.Info("collecting spaces")
+	defer wg.Done()
 	status := successStatus
-
-	client, err := grpc.NewClient(w.Cfg)
-	if err != nil {
-		log.Error(fmt.Sprintf("error getting spaces metrics: %s", err))
-	}
-
 	spacesAmount, err := client.Spaces(ctx)
 	if err != nil {
 		status = errorStatus
@@ -170,6 +166,18 @@ func (w WardenCollector) Collect(ch chan<- prometheus.Metric) {
 			status,
 		}...,
 	)
+	log.Info("collecting spaces done")
+}
+
+func (w WardenCollector) collectKeys(
+	ctx context.Context,
+	client *grpc.Client,
+	ch chan<- prometheus.Metric,
+	wg *sync.WaitGroup,
+) {
+	log.Info("collecting keys")
+	defer wg.Done()
+	status := successStatus
 
 	ecdsa, eddsa, pending, err := client.Keys(ctx)
 	if err != nil {
@@ -204,7 +212,95 @@ func (w WardenCollector) Collect(ch chan<- prometheus.Metric) {
 			status,
 		}...,
 	)
+	log.Info("collecting keys done")
+}
 
+func (w WardenCollector) collectKeychainData(
+	ctx context.Context,
+	client *grpc.Client,
+	ch chan<- prometheus.Metric,
+	x int, wg *sync.WaitGroup,
+) {
+	defer wg.Done()
+	var keychainRequestsAmount uint64
+	var keychainResponse v1beta2.Keychain
+	var err error
+
+	status := successStatus
+
+	keychainRequestsAmount, err = client.KeychainRequests(ctx, uint64(x))
+	if err != nil {
+		log.Error(err.Error())
+		status = errorStatus
+	}
+	keychainResponse, err = client.KeyChain(ctx, uint64(x))
+	if err != nil {
+		log.Error(err.Error())
+		status = errorStatus
+	}
+	ch <- prometheus.MustNewConstMetric(
+		keychainRequests,
+		prometheus.GaugeValue,
+		float64(keychainRequestsAmount),
+		[]string{
+			w.Cfg.ChainID,
+			fmt.Sprintf("%d", x),
+			keychainResponse.Description,
+			status,
+		}...,
+	)
+
+	var boolStatus float64
+	if keychainResponse.IsActive {
+		boolStatus = 1
+	} else {
+		boolStatus = 0
+	}
+	ch <- prometheus.MustNewConstMetric(
+		keychain,
+		prometheus.GaugeValue,
+		boolStatus,
+		[]string{
+			w.Cfg.ChainID,
+			fmt.Sprintf("%d", keychainResponse.Id),
+			keychainResponse.Description,
+			fmt.Sprintf("%v", keychainResponse.Admins),
+			fmt.Sprintf("%v", keychainResponse.Parties),
+			fmt.Sprintf("%v", keychainResponse.AdminIntentId),
+			keychainResponse.Fees.String(),
+			status,
+		}...,
+	)
+
+	// Signature Requests
+	var keychainSignaturesResponse uint64
+	keychainSignaturesResponse, err = client.KeychainSignatureRequests(ctx, uint64(x))
+	if err != nil {
+		log.Error(err.Error())
+		status = errorStatus
+	}
+	ch <- prometheus.MustNewConstMetric(
+		keychainSignatureRequests,
+		prometheus.GaugeValue,
+		float64(keychainSignaturesResponse),
+		[]string{
+			w.Cfg.ChainID,
+			fmt.Sprintf("%d", keychainResponse.Id),
+			keychainResponse.Description,
+			status,
+		}...,
+	)
+}
+
+func (w WardenCollector) collectKeychains(
+	ctx context.Context,
+	client *grpc.Client,
+	ch chan<- prometheus.Metric,
+	wg *sync.WaitGroup,
+) {
+	log.Info("collecting keychains")
+	defer wg.Done()
+	status := successStatus
 	keyChainsAmount, err := client.Keychains(ctx)
 	if err != nil {
 		status = errorStatus
@@ -222,71 +318,32 @@ func (w WardenCollector) Collect(ch chan<- prometheus.Metric) {
 		}...,
 	)
 
-	var keychainRequestsAmount uint64
 	for x := 1; x <= int(keyChainsAmount); x++ {
-		var keychainResponse v1beta2.Keychain
-		status = successStatus
-		keychainRequestsAmount, err = client.KeychainRequests(ctx, uint64(x))
-		if err != nil {
-			log.Error(err.Error())
-			status = errorStatus
-		}
-		keychainResponse, err = client.KeyChain(ctx, uint64(x))
-		if err != nil {
-			log.Error(err.Error())
-			status = errorStatus
-		}
-		ch <- prometheus.MustNewConstMetric(
-			keychainRequests,
-			prometheus.GaugeValue,
-			float64(keychainRequestsAmount),
-			[]string{
-				w.Cfg.ChainID,
-				fmt.Sprintf("%d", x),
-				keychainResponse.Description,
-				status,
-			}...,
-		)
-
-		var boolStatus float64
-		if keychainResponse.IsActive {
-			boolStatus = 1
-		} else {
-			boolStatus = 0
-		}
-		ch <- prometheus.MustNewConstMetric(
-			keychain,
-			prometheus.GaugeValue,
-			boolStatus,
-			[]string{
-				w.Cfg.ChainID,
-				fmt.Sprintf("%d", keychainResponse.Id),
-				keychainResponse.Description,
-				fmt.Sprintf("%v", keychainResponse.Admins),
-				fmt.Sprintf("%v", keychainResponse.Parties),
-				fmt.Sprintf("%v", keychainResponse.AdminIntentId),
-				keychainResponse.Fees.String(),
-				status,
-			}...,
-		)
-
-		// Signature Requests
-		var keychainSignaturesResponse uint64
-		keychainSignaturesResponse, err = client.KeychainSignatureRequests(ctx, uint64(x))
-		if err != nil {
-			log.Error(err.Error())
-			status = errorStatus
-		}
-		ch <- prometheus.MustNewConstMetric(
-			keychainSignatureRequests,
-			prometheus.GaugeValue,
-			float64(keychainSignaturesResponse),
-			[]string{
-				w.Cfg.ChainID,
-				fmt.Sprintf("%d", keychainResponse.Id),
-				keychainResponse.Description,
-				status,
-			}...,
-		)
+		wg.Add(1)
+		go w.collectKeychainData(ctx, client, ch, x, wg)
 	}
+	log.Info("collecting keychains done")
+}
+
+func (w WardenCollector) Collect(ch chan<- prometheus.Metric) {
+	ctx, cancel := context.WithTimeout(
+		context.Background(),
+		time.Duration(w.Cfg.Timeout)*time.Second,
+	)
+
+	defer cancel()
+
+	client, err := grpc.NewClient(w.Cfg)
+	if err != nil {
+		log.Error(fmt.Sprintf("error getting spaces metrics: %s", err))
+	}
+
+	wg := sync.WaitGroup{}
+	wg.Add(collectorCount)
+
+	go w.collectSpaces(ctx, &client, ch, &wg)
+	go w.collectKeys(ctx, &client, ch, &wg)
+	go w.collectKeychains(ctx, &client, ch, &wg)
+
+	wg.Wait()
 }
