@@ -4,8 +4,8 @@ import (
 	context "context"
 
 	"github.com/cosmos/cosmos-sdk/types/query"
-	intent "github.com/warden-protocol/wardenprotocol/warden/x/intent/types"
-	warden "github.com/warden-protocol/wardenprotocol/warden/x/warden/types/v1beta2"
+	act "github.com/warden-protocol/wardenprotocol/warden/x/act/types/v1beta1"
+	warden "github.com/warden-protocol/wardenprotocol/warden/x/warden/types/v1beta3"
 )
 
 const (
@@ -117,9 +117,9 @@ func (c Client) KeychainRequests(ctx context.Context, id uint64) (uint64, error)
 func (c Client) KeychainSignatureRequests(ctx context.Context, id uint64) (uint64, error) {
 	var key []byte
 	client := warden.NewQueryClient(c.conn)
-	req := warden.QuerySignatureRequestsRequest{KeychainId: id, Pagination: &query.PageRequest{Key: key}}
+	req := warden.QuerySignRequestsRequest{KeychainId: id, Pagination: &query.PageRequest{Key: key}}
 
-	keychainRequests, err := client.SignatureRequests(ctx, &req)
+	keychainRequests, err := client.SignRequests(ctx, &req)
 	if err != nil {
 		return 0, endpointError(err.Error())
 	}
@@ -127,31 +127,31 @@ func (c Client) KeychainSignatureRequests(ctx context.Context, id uint64) (uint6
 	return keychainRequests.Pagination.Total, nil
 }
 
-// Intents.
-func (c Client) Intents(ctx context.Context) (uint64, error) {
-	var key []byte
-
-	client := intent.NewQueryClient(c.conn)
-
-	req := intent.QueryIntentsRequest{Pagination: &query.PageRequest{Key: key}}
-
-	intents, err := client.Intents(ctx, &req)
-	if err != nil {
-		return 0, endpointError(err.Error())
-	}
-
-	return intents.Pagination.Total, nil
-}
-
 // Actions.
 func (c Client) Actions(ctx context.Context) (uint64, error) {
 	var key []byte
 
-	client := intent.NewQueryClient(c.conn)
+	client := act.NewQueryClient(c.conn)
 
-	req := intent.QueryActionsRequest{Pagination: &query.PageRequest{Key: key}}
+	req := act.QueryActionsRequest{Pagination: &query.PageRequest{Key: key}}
 
 	actions, err := client.Actions(ctx, &req)
+	if err != nil {
+		return 0, endpointError(err.Error())
+	}
+
+	return actions.Pagination.Total, nil
+}
+
+// Rules.
+func (c Client) Rules(ctx context.Context) (uint64, error) {
+	var key []byte
+
+	client := act.NewQueryClient(c.conn)
+
+	req := act.QueryRulesRequest{Pagination: &query.PageRequest{Key: key}}
+
+	actions, err := client.Rules(ctx, &req)
 	if err != nil {
 		return 0, endpointError(err.Error())
 	}

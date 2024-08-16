@@ -29,7 +29,7 @@ func main() {
 		wardenCollector := collector.WardenCollector{
 			Cfg: cfg,
 		}
-		intentCollector := collector.IntentCollector{
+		actionCollector := collector.ActionCollector{
 			Cfg: cfg,
 		}
 		authCollector := collector.AuthCollector{
@@ -40,7 +40,7 @@ func main() {
 		}
 
 		go prometheus.MustRegister(wardenCollector)
-		go prometheus.MustRegister(intentCollector)
+		go prometheus.MustRegister(actionCollector)
 		go prometheus.MustRegister(authCollector)
 		go prometheus.MustRegister(walletCollector)
 	}

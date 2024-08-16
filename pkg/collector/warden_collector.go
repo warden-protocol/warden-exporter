@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/prometheus/client_golang/prometheus"
-	"github.com/warden-protocol/wardenprotocol/warden/x/warden/types/v1beta2"
+	"github.com/warden-protocol/wardenprotocol/warden/x/warden/types/v1beta3"
 
 	"github.com/warden-protocol/warden-exporter/pkg/config"
 	"github.com/warden-protocol/warden-exporter/pkg/grpc"
@@ -105,8 +105,7 @@ var keychain = prometheus.NewDesc(
 		"keychain_id",
 		"description",
 		"admins",
-		"parties",
-		"admin_intent_id",
+		"creator",
 		"fees",
 		"status",
 	},
@@ -223,7 +222,7 @@ func (w WardenCollector) collectKeychainData(
 ) {
 	defer wg.Done()
 	var keychainRequestsAmount uint64
-	var keychainResponse v1beta2.Keychain
+	var keychainResponse v1beta3.Keychain
 	var err error
 
 	status := successStatus
@@ -251,11 +250,6 @@ func (w WardenCollector) collectKeychainData(
 	)
 
 	var boolStatus float64
-	if keychainResponse.IsActive {
-		boolStatus = 1
-	} else {
-		boolStatus = 0
-	}
 	ch <- prometheus.MustNewConstMetric(
 		keychain,
 		prometheus.GaugeValue,
@@ -265,8 +259,7 @@ func (w WardenCollector) collectKeychainData(
 			fmt.Sprintf("%d", keychainResponse.Id),
 			keychainResponse.Description,
 			fmt.Sprintf("%v", keychainResponse.Admins),
-			fmt.Sprintf("%v", keychainResponse.Parties),
-			fmt.Sprintf("%v", keychainResponse.AdminIntentId),
+			fmt.Sprintf("%v", keychainResponse.Creator),
 			keychainResponse.Fees.String(),
 			status,
 		}...,
