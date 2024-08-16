@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.9.0](https://github.com/warden-protocol/warden-exporter/compare/v1.8.0...v1.9.0) (2024-08-16)
+
+
+### Features
+
+* update variables to support new version of Warden ([#26](https://github.com/warden-protocol/warden-exporter/issues/26)) ([71c2486](https://github.com/warden-protocol/warden-exporter/commit/71c2486a853240b0bfa9c89ba81d730f05f89d81))
+
 ## [1.8.0](https://github.com/warden-protocol/warden-exporter/compare/v1.7.0...v1.8.0) (2024-07-15)
 
 
