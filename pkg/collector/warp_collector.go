@@ -129,11 +129,14 @@ func queryWarpUsers(db *sql.DB) (int, error) {
 
 func queryWarpQuestsDone(db *sql.DB) ([]QuestDetail, error) {
 	var questDetails []QuestDetail
-	rows, err := db.Query(
-		`SELECT t2.description, t2.type, COUNT(*) as count
+	rows, err := db.Query(`SELECT t2.description, t2.type, sub.count 
+FROM (
+    SELECT t1.quest_pid, COUNT(*) as count
     FROM quests_history t1
-    JOIN quests t2 ON t1.quest_pid = t2.pid
-    GROUP BY t1.quest_pid, t2.description ORDER BY count DESC;`)
+    GROUP BY t1.quest_pid
+) sub
+JOIN quests t2 ON sub.quest_pid = t2.pid
+ORDER BY sub.count DESC;`)
 	if err != nil {
 		return nil, fmt.Errorf("error querying quests: %w", err)
 	}
