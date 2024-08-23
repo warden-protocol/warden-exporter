@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.10.0](https://github.com/warden-protocol/warden-exporter/compare/v1.9.0...v1.10.0) (2024-08-23)
+
+
+### Features
+
+* optimize warp query ([1cf61ee](https://github.com/warden-protocol/warden-exporter/commit/1cf61ee92c3dead4ef186c8a24b0bf133f46bd71))
+
 ## [1.9.0](https://github.com/warden-protocol/warden-exporter/compare/v1.8.0...v1.9.0) (2024-08-16)
 
 
