@@ -41,7 +41,9 @@ func (c Client) Keys(ctx context.Context) (uint64, uint64, uint64, error) {
 	client := warden.NewQueryClient(c.conn)
 
 	for {
-		req := warden.QueryAllKeysRequest{Pagination: &query.PageRequest{Key: key, Limit: keyPageLimit}}
+		req := warden.QueryAllKeysRequest{
+			Pagination: &query.PageRequest{Key: key, Limit: keyPageLimit},
+		}
 
 		allKeys, err := client.AllKeys(ctx, &req)
 		if err != nil {
@@ -149,9 +151,9 @@ func (c Client) Rules(ctx context.Context) (uint64, error) {
 
 	client := act.NewQueryClient(c.conn)
 
-	req := act.QueryRulesRequest{Pagination: &query.PageRequest{Key: key}}
+	req := act.QueryTemplatesRequest{Pagination: &query.PageRequest{Key: key}}
 
-	actions, err := client.Rules(ctx, &req)
+	actions, err := client.Templates(ctx, &req)
 	if err != nil {
 		return 0, endpointError(err.Error())
 	}
