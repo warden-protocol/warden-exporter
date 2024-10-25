@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.11.0](https://github.com/warden-protocol/warden-exporter/compare/v1.10.0...v1.11.0) (2024-10-25)
+
+
+### Features
+
+* v0.5.2 compatibility ([#29](https://github.com/warden-protocol/warden-exporter/issues/29)) ([ce422fb](https://github.com/warden-protocol/warden-exporter/commit/ce422fb44aef69626a7d780c044fd69c7230cf76))
+
 ## [1.10.0](https://github.com/warden-protocol/warden-exporter/compare/v1.9.0...v1.10.0) (2024-08-23)
 
 
