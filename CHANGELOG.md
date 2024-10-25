@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.11.1](https://github.com/warden-protocol/warden-exporter/compare/v1.11.0...v1.11.1) (2024-10-25)
+
+
+### Bug Fixes
+
+* keychain metric name ([#31](https://github.com/warden-protocol/warden-exporter/issues/31)) ([5a742b9](https://github.com/warden-protocol/warden-exporter/commit/5a742b909a3854039164a0f65538d5696419b7de))
+
 ## [1.11.0](https://github.com/warden-protocol/warden-exporter/compare/v1.10.0...v1.11.0) (2024-10-25)
 
 
