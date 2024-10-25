@@ -244,7 +244,7 @@ func (w WardenCollector) collectKeychainData(
 		[]string{
 			w.Cfg.ChainID,
 			fmt.Sprintf("%d", x),
-			keychainResponse.Description,
+			keychainResponse.Name,
 			status,
 		}...,
 	)
@@ -257,7 +257,7 @@ func (w WardenCollector) collectKeychainData(
 		[]string{
 			w.Cfg.ChainID,
 			fmt.Sprintf("%d", keychainResponse.Id),
-			keychainResponse.Description,
+			keychainResponse.Name,
 			fmt.Sprintf("%v", keychainResponse.Admins),
 			fmt.Sprintf("%v", keychainResponse.Creator),
 			keychainResponse.Fees.String(),
@@ -279,7 +279,7 @@ func (w WardenCollector) collectKeychainData(
 		[]string{
 			w.Cfg.ChainID,
 			fmt.Sprintf("%d", keychainResponse.Id),
-			keychainResponse.Description,
+			keychainResponse.Name,
 			status,
 		}...,
 	)
