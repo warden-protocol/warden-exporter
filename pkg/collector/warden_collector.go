@@ -218,7 +218,7 @@ func (w WardenCollector) collectKeychainData(
 	ctx context.Context,
 	client *grpc.Client,
 	ch chan<- prometheus.Metric,
-	x int, wg *sync.WaitGroup,
+	x uint64, wg *sync.WaitGroup,
 ) {
 	defer wg.Done()
 	var keychainRequestsAmount uint64
@@ -227,12 +227,12 @@ func (w WardenCollector) collectKeychainData(
 
 	status := successStatus
 
-	keychainRequestsAmount, err = client.KeychainRequests(ctx, uint64(x))
+	keychainRequestsAmount, err = client.KeychainRequests(ctx, x)
 	if err != nil {
 		log.Error(err.Error())
 		status = errorStatus
 	}
-	keychainResponse, err = client.KeyChain(ctx, uint64(x))
+	keychainResponse, err = client.KeyChain(ctx, x)
 	if err != nil {
 		log.Error(err.Error())
 		status = errorStatus
@@ -267,7 +267,7 @@ func (w WardenCollector) collectKeychainData(
 
 	// Signature Requests
 	var keychainSignaturesResponse uint64
-	keychainSignaturesResponse, err = client.KeychainSignatureRequests(ctx, uint64(x))
+	keychainSignaturesResponse, err = client.KeychainSignatureRequests(ctx, x)
 	if err != nil {
 		log.Error(err.Error())
 		status = errorStatus
@@ -311,7 +311,7 @@ func (w WardenCollector) collectKeychains(
 		}...,
 	)
 
-	for x := 1; x <= int(keyChainsAmount); x++ {
+	for x := uint64(1); x <= keyChainsAmount; x++ {
 		wg.Add(1)
 		go w.collectKeychainData(ctx, client, ch, x, wg)
 	}
