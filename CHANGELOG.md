@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.12.0](https://github.com/warden-protocol/warden-exporter/compare/v1.11.1...v1.12.0) (2025-04-15)
+
+
+### Features
+
+* support for custom denoms ([#33](https://github.com/warden-protocol/warden-exporter/issues/33)) ([1e79b96](https://github.com/warden-protocol/warden-exporter/commit/1e79b96479a34839284da1fc171de41ec4fab560))
+
 ## [1.11.1](https://github.com/warden-protocol/warden-exporter/compare/v1.11.0...v1.11.1) (2024-10-25)
 
 
