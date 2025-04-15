@@ -17,8 +17,6 @@ import (
 
 const (
 	walletBalanceMetricName = "cosmos_wallet_balance"
-	award                   = 1e18
-	uward                   = 1e6
 )
 
 //nolint:gochecknoglobals // this is needed as it's used in multiple places
@@ -44,10 +42,6 @@ func (w WalletBalanceCollector) Describe(ch chan<- *prometheus.Desc) {
 
 func (w WalletBalanceCollector) Collect(ch chan<- prometheus.Metric) {
 	var balanceRaw math.Int
-	denomsMap := map[string]float64{
-		"award": award,
-		"uward": uward,
-	}
 
 	ctx, cancel := context.WithTimeout(
 		context.Background(),
@@ -70,19 +64,24 @@ func (w WalletBalanceCollector) Collect(ch chan<- prometheus.Metric) {
 			log.Error(err.Error())
 			status = errorStatus
 		}
-
-		// Convert balance from atto to none
-		if _, ok := denomsMap[w.Cfg.Denom]; !ok {
-			log.Error("Denom not found")
-			status = errorStatus
-		}
+		balanceBigInt := new(big.Int)
+		balanceBigInt.SetString(balanceRaw.String(), 10)
 
 		// Adjust based on your denomination
-		denomFactor := new(
-			big.Float,
-		).SetFloat64(denomsMap[w.Cfg.Denom])
-		balanceBig := new(big.Float).SetInt(balanceRaw.BigInt())
-		balance, _ := new(big.Float).Quo(balanceBig, denomFactor).Float64()
+		denomString := fmt.Sprintf("1e%d", w.Cfg.Exponent) // w.Cfg.Exponent assumed to be 18
+		denomFactor, ok := new(big.Float).SetString(denomString)
+		if !ok {
+			log.Error("Error parsing denominator factor")
+		}
+
+		// Create a *big.Float from the balance raw value
+		balanceBig := new(big.Float).SetInt(balanceBigInt)
+
+		// Perform the division
+		result := new(big.Float).Quo(balanceBig, denomFactor)
+
+		// Convert the result to float64 if necessary (note: this might still lead to a float64 approximation)
+		balance, _ := result.Float64()
 
 		ch <- prometheus.MustNewConstMetric(
 			walletBalance,
