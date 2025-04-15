@@ -35,13 +35,17 @@ func main() {
 		authCollector := collector.AuthCollector{
 			Cfg: cfg,
 		}
-		walletCollector := collector.WalletBalanceCollector{
-			Cfg: cfg,
-		}
 
 		go prometheus.MustRegister(wardenCollector)
 		go prometheus.MustRegister(actionCollector)
 		go prometheus.MustRegister(authCollector)
+	}
+
+	if cfg.WalletAddresses != "" {
+		walletCollector := collector.WalletBalanceCollector{
+			Cfg: cfg,
+		}
+
 		go prometheus.MustRegister(walletCollector)
 	}
 

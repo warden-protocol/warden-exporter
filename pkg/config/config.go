@@ -24,18 +24,19 @@ func configError(msg string) error {
 
 //nolint:lll //this struct cannot be changed to smaller one
 type Config struct {
-	Addr             string `env:"GRPC_ADDR"            envDefault:"grpc.buenavista.wardenprotocol.org:443" mapstructure:"GRPC_ADDR"`
+	GRPCAddr         string `env:"GRPC_ADDR"            envDefault:"grpc.chiado.wardenprotocol.org:443"     mapstructure:"GRPC_ADDR"`
 	EnvFile          string `env:"ENV_FILE"             envDefault:""`
 	Port             string `env:"PORT"                 envDefault:"8081"                                   mapstructure:"PORT"`
 	TLS              bool   `env:"GRPC_TLS_ENABLED"     envDefault:"true"                                   mapstructure:"GRPC_TLS_ENABLED"`
 	Timeout          int    `env:"GRPC_TIMEOUT_SECONDS" envDefault:"45"                                     mapstructure:"GRPC_TIMEOUT_SECONDS"`
 	TTL              int    `env:"TTL"                  envDefault:"60"                                     mapstructure:"TTL"`
-	ChainID          string `env:"CHAIN_ID"             envDefault:"buenavista-1"                           mapstructure:"CHAIN_ID"`
+	ChainID          string `env:"CHAIN_ID"             envDefault:"chiado_10010-1"                         mapstructure:"CHAIN_ID"`
 	WardenMetrics    bool   `env:"WARDEN_METRICS"       envDefault:"true"                                   mapstructure:"WARDEN_METRICS"`
 	ValidatorMetrics bool   `env:"VALIDATOR_METRICS"    envDefault:"true"                                   mapstructure:"VALIDATOR_METRICS"`
 	WalletAddresses  string `env:"WALLET_ADDRESSES"     envDefault:""                                       mapstructure:"WALLET_ADDRESSES"`
-	Denom            string `env:"DENOM"                envDefault:"uward"                                  mapstructure:"DENOM"`
-	WarpMetrics      bool   `env:"WARP_METRICS"         envDefault:"true"                                   mapstructure:"WARP_METRICS"`
+	Denom            string `env:"DENOM"                envDefault:"award"                                  mapstructure:"DENOM"`
+	Exponent         int    `env:"EXPONENT"             envDefault:"18"                                     mapstructure:"EXPONENT"`
+	WarpMetrics      bool   `env:"WARP_METRICS"         envDefault:"false"                                  mapstructure:"WARP_METRICS"`
 	WarpDB           string `env:"WARP_DATABASE"        envDefault:""                                       mapstructure:"WARP_DATABASE"`
 	WarpDBUser       string `env:"WARP_DATABASE_USER"   envDefault:""                                       mapstructure:"WARP_DATABASE_USER"`
 	WarpDBPass       string `env:"WARP_DATABASE_PASS"   envDefault:""                                       mapstructure:"WARP_DATABASE_PASS"`
@@ -101,7 +102,7 @@ func (c Config) GRPCConn() (*grpc.ClientConn, error) {
 	}
 
 	conn, err := grpc.NewClient(
-		c.Addr,
+		c.GRPCAddr,
 		transportCreds,
 		grpc.WithDefaultCallOptions(
 			grpc.MaxCallRecvMsgSize(math.MaxInt64),
