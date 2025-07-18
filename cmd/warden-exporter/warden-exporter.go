@@ -63,6 +63,13 @@ func main() {
 		go prometheus.MustRegister(warpCollector)
 	}
 
+	if cfg.VeniceMetrics {
+		veniceCollector := collector.VeniceCollector{
+			Cfg: cfg,
+		}
+		go prometheus.MustRegister(veniceCollector)
+	}
+
 	mux := http.NewServeMux()
 	mux.Handle("/metrics", promhttp.Handler())
 	mux.HandleFunc("/healthz", healthCheckHandler)
