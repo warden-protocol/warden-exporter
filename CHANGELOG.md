@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.13.0](https://github.com/warden-protocol/warden-exporter/compare/v1.12.0...v1.13.0) (2025-07-18)
+
+
+### Features
+
+* add venice export module ([#35](https://github.com/warden-protocol/warden-exporter/issues/35)) ([1ecef5c](https://github.com/warden-protocol/warden-exporter/commit/1ecef5ccf5ed66c516d0a917acf225973fee93d2))
+
 ## [1.12.0](https://github.com/warden-protocol/warden-exporter/compare/v1.11.1...v1.12.0) (2025-04-15)
 
 
