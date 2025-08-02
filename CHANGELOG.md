@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.14.0](https://github.com/warden-protocol/warden-exporter/compare/v1.13.0...v1.14.0) (2025-08-02)
+
+
+### Features
+
+* add usd metrics ([ef822aa](https://github.com/warden-protocol/warden-exporter/commit/ef822aa90061940da545cacf9dd861bdbca50ebc))
+
 ## [1.13.0](https://github.com/warden-protocol/warden-exporter/compare/v1.12.0...v1.13.0) (2025-07-18)
 
 
