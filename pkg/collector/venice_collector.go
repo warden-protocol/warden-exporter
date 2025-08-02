@@ -22,8 +22,9 @@ const (
 
 type VeniceUsageResponse struct {
 	Data []struct {
-		ID    string `json:"id"`
-		Usage struct {
+		ID          string `json:"id"`
+		Description string `json:"description"`
+		Usage       struct {
 			TrailingSevenDays struct {
 				USD  string `json:"usd"`
 				VCU  string `json:"vcu"`
@@ -49,6 +50,7 @@ var veniceBilling = prometheus.NewDesc(
 	veniceBillingMetricName,
 	"Returns Venice Billing information",
 	[]string{
+		"symbol",
 		"status",
 	},
 	nil,
@@ -60,6 +62,8 @@ var veniceUsage = prometheus.NewDesc(
 	"Returns Venice API Key usage information",
 	[]string{
 		"id",
+		"description",
+		"symbol",
 		"status",
 	},
 	nil,
@@ -84,7 +88,7 @@ func (v VeniceCollector) Collect(ch chan<- prometheus.Metric) {
 
 	status := successStatus
 
-	balance, err := v.veniceCollectBalance(ctx)
+	diemBalance, usdBalance, err := v.veniceCollectBalance(ctx)
 	if err != nil {
 		log.Error(fmt.Sprintf("error collecting Venice balance: %s", err))
 		status = errorStatus
@@ -93,8 +97,19 @@ func (v VeniceCollector) Collect(ch chan<- prometheus.Metric) {
 	ch <- prometheus.MustNewConstMetric(
 		veniceBilling,
 		prometheus.GaugeValue,
-		balance,
+		diemBalance,
 		[]string{
+			"DIEM",
+			status,
+		}...,
+	)
+
+	ch <- prometheus.MustNewConstMetric(
+		veniceBilling,
+		prometheus.GaugeValue,
+		usdBalance,
+		[]string{
+			"USD",
 			status,
 		}...,
 	)
@@ -107,11 +122,23 @@ func (v VeniceCollector) Collect(ch chan<- prometheus.Metric) {
 
 	for _, data := range usage.Data {
 		diemCount, _ := strconv.ParseFloat(data.Usage.TrailingSevenDays.DIEM, 64)
+		usdCount, _ := strconv.ParseFloat(data.Usage.TrailingSevenDays.USD, 64)
 		ch <- prometheus.MustNewConstMetric(
 			veniceUsage,
 			prometheus.GaugeValue,
 			diemCount,
 			data.ID,
+			data.Description,
+			"DIEM",
+			status,
+		)
+		ch <- prometheus.MustNewConstMetric(
+			veniceUsage,
+			prometheus.GaugeValue,
+			usdCount,
+			data.ID,
+			data.Description,
+			"USD",
 			status,
 		)
 	}
@@ -152,7 +179,7 @@ func (v VeniceCollector) veniceCollectUsage(ctx context.Context) (VeniceUsageRes
 	return veniceResponse, nil
 }
 
-func (v VeniceCollector) veniceCollectBalance(ctx context.Context) (float64, error) {
+func (v VeniceCollector) veniceCollectBalance(ctx context.Context) (float64, float64, error) {
 	// Perform HTTP GET request to Venice API
 	req, err := http.NewRequestWithContext(
 		ctx,
@@ -161,7 +188,7 @@ func (v VeniceCollector) veniceCollectBalance(ctx context.Context) (float64, err
 		nil,
 	)
 	if err != nil {
-		return 0, fmt.Errorf("error creating request: %w", err)
+		return 0, 0, fmt.Errorf("error creating request: %w", err)
 	}
 
 	req.Header.Add("Authorization", "Bearer "+v.Cfg.VeniceAPIKey)
@@ -169,20 +196,21 @@ func (v VeniceCollector) veniceCollectBalance(ctx context.Context) (float64, err
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		return 0, fmt.Errorf("error performing request: %w", err)
+		return 0, 0, fmt.Errorf("error performing request: %w", err)
 	}
 
 	defer resp.Body.Close()
 	if resp.StatusCode != http.StatusOK {
-		return 0, fmt.Errorf("received non-OK response: %d", resp.StatusCode)
+		return 0, 0, fmt.Errorf("received non-OK response: %d", resp.StatusCode)
 	}
 
 	var veniceResponse VeniceBalanceResponse
 	if err = json.NewDecoder(resp.Body).Decode(&veniceResponse); err != nil {
-		return 0, fmt.Errorf("error decoding response: %w", err)
+		return 0, 0, fmt.Errorf("error decoding response: %w", err)
 	}
 
 	log.Info("Venice Billing API request successful")
 
-	return veniceResponse.Data.Balances.DIEM, nil
+	return veniceResponse.Data.Balances.DIEM,
+		veniceResponse.Data.Balances.USD, nil
 }
