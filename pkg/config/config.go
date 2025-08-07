@@ -43,8 +43,8 @@ type Config struct {
 	WarpDBHost       string `env:"WARP_DATABASE_HOST"   envDefault:""                                   mapstructure:"WARP_DATABASE_HOST"`
 	VeniceMetrics    bool   `env:"VENICE_METRICS"       envDefault:"false"                              mapstructure:"VENICE_METRICS"`
 	VeniceAPIKey     string `env:"VENICE_API_KEY"       envDefault:""                                   mapstructure:"VENICE_API_KEY"`
-	MessariMetrics   bool   `env:"MESSARI_METRICS"      envDefault:"false"                              mapstructure:"VENICE_METRICS"`
-	MessariAPIKey    string `env:"MESSARI_API_KEY"      envDefault:""                                   mapstructure:"VENICE_API_KEY"`
+	MessariMetrics   bool   `env:"MESSARI_METRICS"      envDefault:"false"                              mapstructure:"MESSARI_METRICS"`
+	MessariAPIKey    string `env:"MESSARI_API_KEY"      envDefault:""                                   mapstructure:"MESSARI_API_KEY"`
 }
 
 func LoadConfig() (Config, error) {
