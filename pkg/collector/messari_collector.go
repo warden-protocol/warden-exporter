@@ -64,7 +64,7 @@ func (m MessariCollector) Collect(ch chan<- prometheus.Metric) {
 
 	response, err := m.messariCollectCredits(ctx)
 	if err != nil {
-		log.Error(fmt.Sprintf("error collecting Venice balance: %s", err))
+		log.Error(fmt.Sprintf("error collecting Messari credits %s", err))
 		status = errorStatus
 	}
 
