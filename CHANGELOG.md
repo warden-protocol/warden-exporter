@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.15.2](https://github.com/warden-protocol/warden-exporter/compare/v1.15.1...v1.15.2) (2025-08-07)
+
+
+### Bug Fixes
+
+* messari configuration set wrong ([19ebc23](https://github.com/warden-protocol/warden-exporter/commit/19ebc237f7d8b91a71ba78dfd617a2216922280b))
+
 ## [1.15.1](https://github.com/warden-protocol/warden-exporter/compare/v1.15.0...v1.15.1) (2025-08-07)
 
 
