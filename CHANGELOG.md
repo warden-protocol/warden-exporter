@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.15.1](https://github.com/warden-protocol/warden-exporter/compare/v1.15.0...v1.15.1) (2025-08-07)
+
+
+### Bug Fixes
+
+* logging with wrong message ([5d764eb](https://github.com/warden-protocol/warden-exporter/commit/5d764ebf9f39124e42d0322d337f1f5778f27cd1))
+
 ## [1.15.0](https://github.com/warden-protocol/warden-exporter/compare/v1.14.0...v1.15.0) (2025-08-07)
 
 
