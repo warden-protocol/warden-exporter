@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.15.0](https://github.com/warden-protocol/warden-exporter/compare/v1.14.0...v1.15.0) (2025-08-07)
+
+
+### Features
+
+* add messari client ([85a3d93](https://github.com/warden-protocol/warden-exporter/commit/85a3d9309f11a2f17ab89f28378bcfcec2ac39ee))
+
 ## [1.14.0](https://github.com/warden-protocol/warden-exporter/compare/v1.13.0...v1.14.0) (2025-08-02)
 
 
