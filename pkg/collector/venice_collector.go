@@ -1,16 +1,17 @@
 package collector
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
-	"net/http"
 	"strconv"
 	"time"
 
 	"github.com/prometheus/client_golang/prometheus"
 
 	"github.com/warden-protocol/warden-exporter/pkg/config"
+	"github.com/warden-protocol/warden-exporter/pkg/http"
 	log "github.com/warden-protocol/warden-exporter/pkg/logger"
 )
 
@@ -145,32 +146,15 @@ func (v VeniceCollector) Collect(ch chan<- prometheus.Metric) {
 }
 
 func (v VeniceCollector) veniceCollectUsage(ctx context.Context) (VeniceUsageResponse, error) {
-	// Perform HTTP GET request to Venice API
-	req, err := http.NewRequestWithContext(
-		ctx,
-		http.MethodGet,
-		fmt.Sprintf("%s/api_keys", veniceAPIURL),
-		nil,
-	)
+	url := fmt.Sprintf("%s/api_keys", veniceAPIURL)
+
+	data, err := http.GetRequest(ctx, url, v.Cfg.VeniceAPIKey)
 	if err != nil {
-		return VeniceUsageResponse{}, fmt.Errorf("error creating request: %w", err)
-	}
-
-	req.Header.Add("Authorization", "Bearer "+v.Cfg.VeniceAPIKey)
-
-	client := &http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		return VeniceUsageResponse{}, fmt.Errorf("error performing request: %w", err)
-	}
-
-	defer resp.Body.Close()
-	if resp.StatusCode != http.StatusOK {
-		return VeniceUsageResponse{}, fmt.Errorf("received non-OK response: %d", resp.StatusCode)
+		return VeniceUsageResponse{}, err
 	}
 
 	var veniceResponse VeniceUsageResponse
-	if err = json.NewDecoder(resp.Body).Decode(&veniceResponse); err != nil {
+	if err = json.NewDecoder(bytes.NewReader(data)).Decode(&veniceResponse); err != nil {
 		return VeniceUsageResponse{}, fmt.Errorf("error decoding response: %w", err)
 	}
 
@@ -180,32 +164,14 @@ func (v VeniceCollector) veniceCollectUsage(ctx context.Context) (VeniceUsageRes
 }
 
 func (v VeniceCollector) veniceCollectBalance(ctx context.Context) (float64, float64, error) {
+	url := fmt.Sprintf("%s/api_keys/rate_Limits", veniceAPIURL)
 	// Perform HTTP GET request to Venice API
-	req, err := http.NewRequestWithContext(
-		ctx,
-		http.MethodGet,
-		fmt.Sprintf("%s/api_keys/rate_Limits", veniceAPIURL),
-		nil,
-	)
+	data, err := http.GetRequest(ctx, url, v.Cfg.VeniceAPIKey)
 	if err != nil {
-		return 0, 0, fmt.Errorf("error creating request: %w", err)
+		return 0, 0, err
 	}
-
-	req.Header.Add("Authorization", "Bearer "+v.Cfg.VeniceAPIKey)
-
-	client := &http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		return 0, 0, fmt.Errorf("error performing request: %w", err)
-	}
-
-	defer resp.Body.Close()
-	if resp.StatusCode != http.StatusOK {
-		return 0, 0, fmt.Errorf("received non-OK response: %d", resp.StatusCode)
-	}
-
 	var veniceResponse VeniceBalanceResponse
-	if err = json.NewDecoder(resp.Body).Decode(&veniceResponse); err != nil {
+	if err = json.NewDecoder(bytes.NewReader(data)).Decode(&veniceResponse); err != nil {
 		return 0, 0, fmt.Errorf("error decoding response: %w", err)
 	}
 
