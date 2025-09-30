@@ -45,6 +45,9 @@ type Config struct {
 	VeniceAPIKey     string `env:"VENICE_API_KEY"       envDefault:""                                   mapstructure:"VENICE_API_KEY"`
 	MessariMetrics   bool   `env:"MESSARI_METRICS"      envDefault:"false"                              mapstructure:"MESSARI_METRICS"`
 	MessariAPIKey    string `env:"MESSARI_API_KEY"      envDefault:""                                   mapstructure:"MESSARI_API_KEY"`
+	BaseMetrics      bool   `env:"BASE_METRICS"         envDefault:"false"                              mapstructure:"BASE_METRICS"`
+	BaseRPCURL       string `env:"BASE_RPC_URL"         envDefault:""                                   mapstructure:"BASE_RPC_URL"`
+	BaseAddresses    string `env:"BASE_ADDRESSES"       envDefault:""                                   mapstructure:"BASE_ADDRESSES"`
 }
 
 func LoadConfig() (Config, error) {
