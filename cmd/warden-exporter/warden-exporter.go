@@ -77,6 +77,13 @@ func main() {
 		go prometheus.MustRegister(messariCollector)
 	}
 
+	if cfg.BaseMetrics {
+		baseCollector := collector.BaseCollector{
+			Cfg: cfg,
+		}
+		go prometheus.MustRegister(baseCollector)
+	}
+
 	mux := http.NewServeMux()
 	mux.Handle("/metrics", promhttp.Handler())
 	mux.HandleFunc("/healthz", healthCheckHandler)
