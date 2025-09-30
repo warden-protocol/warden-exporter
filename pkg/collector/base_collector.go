@@ -46,6 +46,7 @@ var baseBalance = prometheus.NewDesc(
 	"Returns the wallet balance on Base blockchain",
 	[]string{
 		"account",
+		"symbol",
 		"status",
 	},
 	nil,
@@ -87,6 +88,7 @@ func (b BaseCollector) Collect(ch chan<- prometheus.Metric) {
 			balance,
 			[]string{
 				addr,
+				"ETH",
 				status,
 			}...,
 		)
