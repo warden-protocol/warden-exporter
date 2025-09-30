@@ -134,7 +134,7 @@ func (b BaseCollector) getBalance(ctx context.Context, address string) (float64,
 	}
 
 	var rpcResp JSONRPCResponse
-	if err := json.Unmarshal(body, &rpcResp); err != nil {
+	if err = json.Unmarshal(body, &rpcResp); err != nil {
 		return 0, fmt.Errorf("error unmarshaling response: %w", err)
 	}
 
