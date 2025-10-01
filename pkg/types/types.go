@@ -8,4 +8,7 @@ type Validator struct {
 	Jailed          bool
 	Tombstoned      bool
 	BondStatus      string
+	BlocksProposed  int64
+	Tokens          float64
+	DelegatorShares float64
 }

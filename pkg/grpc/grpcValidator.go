@@ -3,6 +3,7 @@ package grpc
 import (
 	"context"
 	"fmt"
+	"math/big"
 	"strings"
 
 	base "cosmossdk.io/api/cosmos/base/tendermint/v1beta1"
@@ -169,14 +170,25 @@ func SigningValidators(ctx context.Context, cfg config.Config) ([]types.Validato
 			log.Debug(fmt.Sprintf("Not in validators: %s", info.Address))
 		}
 
+		val := valsMap[info.Address]
+
+		// Convert math.Int to float64 via big.Int
+		tokensBigInt := val.Tokens.BigInt()
+		tokens, _ := new(big.Float).SetInt(tokensBigInt).Float64()
+
+		// Convert math.LegacyDec to float64
+		delegatorShares, _ := val.DelegatorShares.Float64()
+
 		sVals = append(sVals, types.Validator{
 			ConsAddress:     info.Address,
-			OperatorAddress: valsMap[info.Address].OperatorAddress,
-			Moniker:         valsMap[info.Address].Description.Moniker,
+			OperatorAddress: val.OperatorAddress,
+			Moniker:         val.Description.Moniker,
 			MissedBlocks:    info.MissedBlocksCounter,
-			Jailed:          valsMap[info.Address].IsJailed(),
+			Jailed:          val.IsJailed(),
 			Tombstoned:      info.Tombstoned,
-			BondStatus:      bondStatus(valsMap[info.Address].GetStatus()),
+			BondStatus:      bondStatus(val.GetStatus()),
+			Tokens:          tokens,
+			DelegatorShares: delegatorShares,
 		})
 	}
 
@@ -212,6 +224,136 @@ func LatestBlockHeight(ctx context.Context, cfg config.Config) (int64, error) {
 	log.Debug(fmt.Sprintf("Latest height: %d", height))
 
 	return height, nil
+}
+
+func BlockProposers(ctx context.Context, cfg config.Config, blockCount int64) (map[string]int64, error) {
+	client, err := NewClient(cfg)
+	if err != nil {
+		log.Error(err.Error())
+
+		return nil, endpointError(err.Error())
+	}
+
+	baseClient := base.NewServiceClient(client.conn)
+
+	// Get latest block height first
+	latestReq := &base.GetLatestBlockRequest{}
+	latestResp, err := baseClient.GetLatestBlock(ctx, latestReq)
+
+	defer func() {
+		if tempErr := client.conn.Close(); tempErr != nil {
+			log.Error(tempErr.Error())
+		}
+	}()
+
+	if err != nil {
+		log.Error(err.Error())
+
+		return nil, endpointError(err.Error())
+	}
+
+	latestHeight := latestResp.GetBlock().Header.Height
+	startHeight := latestHeight - blockCount
+	if startHeight < 1 {
+		startHeight = 1
+	}
+
+	// Count proposers
+	proposerCounts := make(map[string]int64)
+
+	for height := startHeight; height <= latestHeight; height++ {
+		blockReq := &base.GetBlockByHeightRequest{Height: height}
+		blockResp, err := baseClient.GetBlockByHeight(ctx, blockReq)
+
+		if err != nil {
+			log.Debug(fmt.Sprintf("Error fetching block %d: %s", height, err.Error()))
+			continue
+		}
+
+		if blockResp.GetBlock() != nil && blockResp.GetBlock().Header != nil {
+			proposerAddr := blockResp.GetBlock().Header.ProposerAddress
+
+			// Convert proposer address bytes to valcons address
+			consAddr, err := bech32.ConvertAndEncode(prefix+valConsStr, proposerAddr)
+			if err != nil {
+				log.Debug(fmt.Sprintf("Error converting proposer address at height %d: %s", height, err.Error()))
+				continue
+			}
+
+			proposerCounts[consAddr]++
+		}
+	}
+
+	log.Debug(fmt.Sprintf("Scanned blocks %d to %d, found %d unique proposers", startHeight, latestHeight, len(proposerCounts)))
+
+	return proposerCounts, nil
+}
+
+func AverageBlockTime(ctx context.Context, cfg config.Config, sampleSize int64) (float64, error) {
+	client, err := NewClient(cfg)
+	if err != nil {
+		log.Error(err.Error())
+
+		return 0, endpointError(err.Error())
+	}
+
+	baseClient := base.NewServiceClient(client.conn)
+
+	// Get latest block height first
+	latestReq := &base.GetLatestBlockRequest{}
+	latestResp, err := baseClient.GetLatestBlock(ctx, latestReq)
+
+	defer func() {
+		if tempErr := client.conn.Close(); tempErr != nil {
+			log.Error(tempErr.Error())
+		}
+	}()
+
+	if err != nil {
+		log.Error(err.Error())
+
+		return 0, endpointError(err.Error())
+	}
+
+	latestHeight := latestResp.GetBlock().Header.Height
+	startHeight := latestHeight - sampleSize
+	if startHeight < 1 {
+		startHeight = 1
+	}
+
+	// Get start block
+	startBlockReq := &base.GetBlockByHeightRequest{Height: startHeight}
+	startBlockResp, err := baseClient.GetBlockByHeight(ctx, startBlockReq)
+	if err != nil {
+		log.Error(err.Error())
+
+		return 0, endpointError(err.Error())
+	}
+
+	// Get end block (latest)
+	endBlockReq := &base.GetBlockByHeightRequest{Height: latestHeight}
+	endBlockResp, err := baseClient.GetBlockByHeight(ctx, endBlockReq)
+	if err != nil {
+		log.Error(err.Error())
+
+		return 0, endpointError(err.Error())
+	}
+
+	startTime := startBlockResp.GetBlock().Header.Time.AsTime()
+	endTime := endBlockResp.GetBlock().Header.Time.AsTime()
+
+	timeDiff := endTime.Sub(startTime).Seconds()
+	blockCount := float64(latestHeight - startHeight)
+
+	if blockCount == 0 {
+		return 0, endpointError("invalid block count")
+	}
+
+	avgBlockTime := timeDiff / blockCount
+
+	log.Debug(fmt.Sprintf("Average block time: %.2f seconds (sampled %d blocks)", avgBlockTime, int64(blockCount)))
+
+	return avgBlockTime, nil
 }
 
 func bondStatus(status staking.BondStatus) string {
