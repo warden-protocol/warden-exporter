@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.17.0](https://github.com/warden-protocol/warden-exporter/compare/v1.16.0...v1.17.0) (2025-10-01)
+
+
+### Features
+
+* more validator metrics ([f3ebd44](https://github.com/warden-protocol/warden-exporter/commit/f3ebd44b41028641237989848ecb4821e0e30ce7))
+
 ## [1.16.0](https://github.com/warden-protocol/warden-exporter/compare/v1.15.2...v1.16.0) (2025-09-30)
 
 
