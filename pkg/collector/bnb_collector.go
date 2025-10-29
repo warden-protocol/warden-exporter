@@ -14,13 +14,13 @@ import (
 )
 
 const (
-	baseBalanceMetricName = "base_wallet_balance"
+	bnbBalanceMetricName = "bnb_wallet_balance"
 )
 
 //nolint:gochecknoglobals // this is needed as it's used in multiple places
-var baseBalance = prometheus.NewDesc(
-	baseBalanceMetricName,
-	"Returns the wallet balance on Base blockchain",
+var bnbBalance = prometheus.NewDesc(
+	bnbBalanceMetricName,
+	"Returns the wallet balance on BNB blockchain",
 	[]string{
 		"account",
 		"symbol",
@@ -29,22 +29,22 @@ var baseBalance = prometheus.NewDesc(
 	nil,
 )
 
-type BaseCollector struct {
+type BnbCollector struct {
 	Cfg config.Config
 }
 
-func (b BaseCollector) Describe(ch chan<- *prometheus.Desc) {
-	ch <- baseBalance
+func (bn BnbCollector) Describe(ch chan<- *prometheus.Desc) {
+	ch <- bnbBalance
 }
 
-func (b BaseCollector) Collect(ch chan<- prometheus.Metric) {
+func (bn BnbCollector) Collect(ch chan<- prometheus.Metric) {
 	ctx, cancel := context.WithTimeout(
 		context.Background(),
-		time.Duration(b.Cfg.Timeout)*time.Second,
+		time.Duration(bn.Cfg.Timeout)*time.Second,
 	)
 	defer cancel()
 
-	addresses := strings.Split(b.Cfg.BaseAddresses, ",")
+	addresses := strings.Split(bn.Cfg.BnbAddresses, ",")
 	for _, addr := range addresses {
 		addr = strings.TrimSpace(addr)
 		if addr == "" {
@@ -52,7 +52,7 @@ func (b BaseCollector) Collect(ch chan<- prometheus.Metric) {
 		}
 
 		status := successStatus
-		balance, err := getBalance(ctx, b.Cfg.BaseRPCURL, addr, b.Cfg.Timeout)
+		balance, err := getBalance(ctx, bn.Cfg.BnbRPCURL, addr, bn.Cfg.Timeout)
 		if err != nil {
 			log.Error(fmt.Sprintf("error getting balance for address %s: %s", addr, err))
 			status = errorStatus
@@ -60,12 +60,12 @@ func (b BaseCollector) Collect(ch chan<- prometheus.Metric) {
 		}
 
 		ch <- prometheus.MustNewConstMetric(
-			baseBalance,
+			bnbBalance,
 			prometheus.GaugeValue,
 			balance,
 			[]string{
 				addr,
-				"ETH",
+				"BNB",
 				status,
 			}...,
 		)
