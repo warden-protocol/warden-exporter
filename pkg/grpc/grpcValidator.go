@@ -16,7 +16,7 @@ import (
 
 	"github.com/warden-protocol/warden-exporter/pkg/config"
 	log "github.com/warden-protocol/warden-exporter/pkg/logger"
-	types "github.com/warden-protocol/warden-exporter/pkg/types"
+	validator "github.com/warden-protocol/warden-exporter/pkg/validator"
 )
 
 const (
@@ -127,14 +127,14 @@ func (c Client) valConsMap(vals []staking.Validator) (map[string]staking.Validat
 	return vMap, nil
 }
 
-func SigningValidators(ctx context.Context, cfg config.Config) ([]types.Validator, error) {
-	sVals := []types.Validator{}
+func SigningValidators(ctx context.Context, cfg config.Config) ([]validator.Validator, error) {
+	sVals := []validator.Validator{}
 
 	client, err := NewClient(cfg)
 	if err != nil {
 		log.Error(err.Error())
 
-		return []types.Validator{}, endpointError(err.Error())
+		return []validator.Validator{}, endpointError(err.Error())
 	}
 
 	sInfos, err := client.SignigInfos(ctx)
@@ -148,21 +148,21 @@ func SigningValidators(ctx context.Context, cfg config.Config) ([]types.Validato
 	if err != nil {
 		log.Error(err.Error())
 
-		return []types.Validator{}, endpointError(err.Error())
+		return []validator.Validator{}, endpointError(err.Error())
 	}
 
 	vals, err := client.Validators(ctx)
 	if err != nil {
 		log.Error(err.Error())
 
-		return []types.Validator{}, endpointError(err.Error())
+		return []validator.Validator{}, endpointError(err.Error())
 	}
 
 	valsMap, err := client.valConsMap(vals)
 	if err != nil {
 		log.Error(err.Error())
 
-		return []types.Validator{}, endpointError(err.Error())
+		return []validator.Validator{}, endpointError(err.Error())
 	}
 
 	for _, info := range sInfos {
@@ -179,7 +179,7 @@ func SigningValidators(ctx context.Context, cfg config.Config) ([]types.Validato
 		// Convert math.LegacyDec to float64
 		delegatorShares, _ := val.DelegatorShares.Float64()
 
-		sVals = append(sVals, types.Validator{
+		sVals = append(sVals, validator.Validator{
 			ConsAddress:     info.Address,
 			OperatorAddress: val.OperatorAddress,
 			Moniker:         val.Description.Moniker,
@@ -226,7 +226,11 @@ func LatestBlockHeight(ctx context.Context, cfg config.Config) (int64, error) {
 	return height, nil
 }
 
-func BlockProposers(ctx context.Context, cfg config.Config, blockCount int64) (map[string]int64, error) {
+func BlockProposers(
+	ctx context.Context,
+	cfg config.Config,
+	blockCount int64,
+) (map[string]int64, error) {
 	client, err := NewClient(cfg)
 	if err != nil {
 		log.Error(err.Error())
@@ -254,29 +258,34 @@ func BlockProposers(ctx context.Context, cfg config.Config, blockCount int64) (m
 
 	latestHeight := latestResp.GetBlock().Header.Height
 	startHeight := latestHeight - blockCount
-	if startHeight < 1 {
-		startHeight = 1
-	}
+	startHeight = max(startHeight, 1)
 
 	// Count proposers
 	proposerCounts := make(map[string]int64)
 
 	for height := startHeight; height <= latestHeight; height++ {
+		var blockResp *base.GetBlockByHeightResponse
 		blockReq := &base.GetBlockByHeightRequest{Height: height}
-		blockResp, err := baseClient.GetBlockByHeight(ctx, blockReq)
-
+		blockResp, err = baseClient.GetBlockByHeight(ctx, blockReq)
 		if err != nil {
 			log.Debug(fmt.Sprintf("Error fetching block %d: %s", height, err.Error()))
 			continue
 		}
 
 		if blockResp.GetBlock() != nil && blockResp.GetBlock().Header != nil {
+			var consAddr string
 			proposerAddr := blockResp.GetBlock().Header.ProposerAddress
 
 			// Convert proposer address bytes to valcons address
-			consAddr, err := bech32.ConvertAndEncode(prefix+valConsStr, proposerAddr)
+			consAddr, err = bech32.ConvertAndEncode(prefix+valConsStr, proposerAddr)
 			if err != nil {
-				log.Debug(fmt.Sprintf("Error converting proposer address at height %d: %s", height, err.Error()))
+				log.Debug(
+					fmt.Sprintf(
+						"Error converting proposer address at height %d: %s",
+						height,
+						err.Error(),
+					),
+				)
 				continue
 			}
 
@@ -284,7 +293,14 @@ func BlockProposers(ctx context.Context, cfg config.Config, blockCount int64) (m
 		}
 	}
 
-	log.Debug(fmt.Sprintf("Scanned blocks %d to %d, found %d unique proposers", startHeight, latestHeight, len(proposerCounts)))
+	log.Debug(
+		fmt.Sprintf(
+			"Scanned blocks %d to %d, found %d unique proposers",
+			startHeight,
+			latestHeight,
+			len(proposerCounts),
+		),
+	)
 
 	return proposerCounts, nil
 }
@@ -317,9 +333,7 @@ func AverageBlockTime(ctx context.Context, cfg config.Config, sampleSize int64) 
 
 	latestHeight := latestResp.GetBlock().Header.Height
 	startHeight := latestHeight - sampleSize
-	if startHeight < 1 {
-		startHeight = 1
-	}
+	startHeight = max(startHeight, 1)
 
 	// Get start block
 	startBlockReq := &base.GetBlockByHeightRequest{Height: startHeight}
@@ -351,7 +365,13 @@ func AverageBlockTime(ctx context.Context, cfg config.Config, sampleSize int64) 
 
 	avgBlockTime := timeDiff / blockCount
 
-	log.Debug(fmt.Sprintf("Average block time: %.2f seconds (sampled %d blocks)", avgBlockTime, int64(blockCount)))
+	log.Debug(
+		fmt.Sprintf(
+			"Average block time: %.2f seconds (sampled %d blocks)",
+			avgBlockTime,
+			int64(blockCount),
+		),
+	)
 
 	return avgBlockTime, nil
 }

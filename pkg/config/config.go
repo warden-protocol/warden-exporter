@@ -31,16 +31,10 @@ type Config struct {
 	Timeout          int    `env:"GRPC_TIMEOUT_SECONDS" envDefault:"45"                          mapstructure:"GRPC_TIMEOUT_SECONDS"`
 	TTL              int    `env:"TTL"                  envDefault:"60"                          mapstructure:"TTL"`
 	ChainID          string `env:"CHAIN_ID"             envDefault:"warden_8765-1"               mapstructure:"CHAIN_ID"`
-	WardenMetrics    bool   `env:"WARDEN_METRICS"       envDefault:"true"                        mapstructure:"WARDEN_METRICS"`
 	ValidatorMetrics bool   `env:"VALIDATOR_METRICS"    envDefault:"true"                        mapstructure:"VALIDATOR_METRICS"`
 	WalletAddresses  string `env:"WALLET_ADDRESSES"     envDefault:""                            mapstructure:"WALLET_ADDRESSES"`
 	Denom            string `env:"DENOM"                envDefault:"award"                       mapstructure:"DENOM"`
 	Exponent         int    `env:"EXPONENT"             envDefault:"18"                          mapstructure:"EXPONENT"`
-	WarpMetrics      bool   `env:"WARP_METRICS"         envDefault:"false"                       mapstructure:"WARP_METRICS"`
-	WarpDB           string `env:"WARP_DATABASE"        envDefault:""                            mapstructure:"WARP_DATABASE"`
-	WarpDBUser       string `env:"WARP_DATABASE_USER"   envDefault:""                            mapstructure:"WARP_DATABASE_USER"`
-	WarpDBPass       string `env:"WARP_DATABASE_PASS"   envDefault:""                            mapstructure:"WARP_DATABASE_PASS"`
-	WarpDBHost       string `env:"WARP_DATABASE_HOST"   envDefault:""                            mapstructure:"WARP_DATABASE_HOST"`
 	VeniceMetrics    bool   `env:"VENICE_METRICS"       envDefault:"false"                       mapstructure:"VENICE_METRICS"`
 	VeniceAPIKey     string `env:"VENICE_API_KEY"       envDefault:""                            mapstructure:"VENICE_API_KEY"`
 	MessariMetrics   bool   `env:"MESSARI_METRICS"      envDefault:"false"                       mapstructure:"MESSARI_METRICS"`
@@ -48,6 +42,9 @@ type Config struct {
 	BaseMetrics      bool   `env:"BASE_METRICS"         envDefault:"false"                       mapstructure:"BASE_METRICS"`
 	BaseRPCURL       string `env:"BASE_RPC_URL"         envDefault:""                            mapstructure:"BASE_RPC_URL"`
 	BaseAddresses    string `env:"BASE_ADDRESSES"       envDefault:""                            mapstructure:"BASE_ADDRESSES"`
+	BnbMetrics       bool   `env:"BNB_METRICS"          envDefault:"false"                       mapstructure:"BNB_METRICS"`
+	BnbRPCURL        string `env:"BNB_RPC_URL"          envDefault:""                            mapstructure:"BNB_RPC_URL"`
+	BnbAddresses     string `env:"BNB_ADDRESSES"        envDefault:""                            mapstructure:"BNB_ADDRESSES"`
 	BlockWindow      int64  `env:"BLOCK_WINDOW"         envDefault:"200"                         mapstructure:"BLOCK_WINDOW"`
 }
 

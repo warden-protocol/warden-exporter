@@ -25,22 +25,6 @@ func main() {
 
 	log.SetLevel(*logLevel)
 
-	if cfg.WardenMetrics {
-		wardenCollector := collector.WardenCollector{
-			Cfg: cfg,
-		}
-		actionCollector := collector.ActionCollector{
-			Cfg: cfg,
-		}
-		authCollector := collector.AuthCollector{
-			Cfg: cfg,
-		}
-
-		go prometheus.MustRegister(wardenCollector)
-		go prometheus.MustRegister(actionCollector)
-		go prometheus.MustRegister(authCollector)
-	}
-
 	if cfg.WalletAddresses != "" {
 		walletCollector := collector.WalletBalanceCollector{
 			Cfg: cfg,
@@ -54,13 +38,6 @@ func main() {
 			Cfg: cfg,
 		}
 		go prometheus.MustRegister(validatorCollector)
-	}
-
-	if cfg.WarpMetrics {
-		warpCollector := collector.WarpCollector{
-			Cfg: cfg,
-		}
-		go prometheus.MustRegister(warpCollector)
 	}
 
 	if cfg.VeniceMetrics {
@@ -82,6 +59,13 @@ func main() {
 			Cfg: cfg,
 		}
 		go prometheus.MustRegister(baseCollector)
+	}
+
+	if cfg.BnbMetrics {
+		bnbCollector := collector.BnbCollector{
+			Cfg: cfg,
+		}
+		go prometheus.MustRegister(bnbCollector)
 	}
 
 	mux := http.NewServeMux()

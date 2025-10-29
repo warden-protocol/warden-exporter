@@ -11,7 +11,7 @@ import (
 	"github.com/warden-protocol/warden-exporter/pkg/config"
 	"github.com/warden-protocol/warden-exporter/pkg/grpc"
 	log "github.com/warden-protocol/warden-exporter/pkg/logger"
-	types "github.com/warden-protocol/warden-exporter/pkg/types"
+	validator "github.com/warden-protocol/warden-exporter/pkg/validator"
 )
 
 const (
@@ -109,6 +109,8 @@ func (vc ValidatorsCollector) Describe(ch chan<- *prometheus.Desc) {
 }
 
 func (vc ValidatorsCollector) Collect(ch chan<- prometheus.Metric) {
+	var err error
+	var proposerCounts map[string]int64
 	ctx, cancel := context.WithTimeout(
 		context.Background(),
 		time.Duration(vc.Cfg.Timeout)*time.Second,
@@ -121,7 +123,7 @@ func (vc ValidatorsCollector) Collect(ch chan<- prometheus.Metric) {
 		log.Error(fmt.Sprintf("error getting signing validators: %s", err))
 	} else {
 		// Get block proposer counts
-		proposerCounts, err := grpc.BlockProposers(ctx, vc.Cfg, vc.Cfg.BlockWindow)
+		proposerCounts, err = grpc.BlockProposers(ctx, vc.Cfg, vc.Cfg.BlockWindow)
 		if err != nil {
 			log.Error(fmt.Sprintf("error getting block proposers: %s", err))
 			proposerCounts = make(map[string]int64)
@@ -165,7 +167,7 @@ func (vc ValidatorsCollector) Collect(ch chan<- prometheus.Metric) {
 	}
 }
 
-func (vc ValidatorsCollector) missedBlocksMetrics(vals []types.Validator) []prometheus.Metric {
+func (vc ValidatorsCollector) missedBlocksMetrics(vals []validator.Validator) []prometheus.Metric {
 	metrics := []prometheus.Metric{}
 
 	for _, val := range vals {
@@ -191,7 +193,9 @@ func (vc ValidatorsCollector) missedBlocksMetrics(vals []types.Validator) []prom
 	return metrics
 }
 
-func (vc ValidatorsCollector) blocksProposedMetrics(vals []types.Validator) []prometheus.Metric {
+func (vc ValidatorsCollector) blocksProposedMetrics(
+	vals []validator.Validator,
+) []prometheus.Metric {
 	metrics := []prometheus.Metric{}
 
 	for _, val := range vals {
@@ -217,7 +221,7 @@ func (vc ValidatorsCollector) blocksProposedMetrics(vals []types.Validator) []pr
 	return metrics
 }
 
-func (vc ValidatorsCollector) tokensMetrics(vals []types.Validator) []prometheus.Metric {
+func (vc ValidatorsCollector) tokensMetrics(vals []validator.Validator) []prometheus.Metric {
 	metrics := []prometheus.Metric{}
 
 	for _, val := range vals {
@@ -243,7 +247,9 @@ func (vc ValidatorsCollector) tokensMetrics(vals []types.Validator) []prometheus
 	return metrics
 }
 
-func (vc ValidatorsCollector) delegatorSharesMetrics(vals []types.Validator) []prometheus.Metric {
+func (vc ValidatorsCollector) delegatorSharesMetrics(
+	vals []validator.Validator,
+) []prometheus.Metric {
 	metrics := []prometheus.Metric{}
 
 	for _, val := range vals {

@@ -1,6 +1,6 @@
 module github.com/warden-protocol/warden-exporter
 
-go 1.23.1
+go 1.25.1
 
 //nolint:gomoddirectives // we need this since comet.BlockInfo is renamed
 replace cosmossdk.io/core => cosmossdk.io/core v0.11.0

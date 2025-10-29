@@ -1,4 +1,4 @@
-package types
+package validator
 
 type Validator struct {
 	OperatorAddress string
