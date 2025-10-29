@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.18.0](https://github.com/warden-protocol/warden-exporter/compare/v1.17.0...v1.18.0) (2025-10-29)
+
+
+### Features
+
+* bnb account monitoring ([#44](https://github.com/warden-protocol/warden-exporter/issues/44)) ([25d5431](https://github.com/warden-protocol/warden-exporter/commit/25d5431080d0a5a06f60d5ce699f08da285c3f69))
+
 ## [1.17.0](https://github.com/warden-protocol/warden-exporter/compare/v1.16.0...v1.17.0) (2025-10-01)
 
 
