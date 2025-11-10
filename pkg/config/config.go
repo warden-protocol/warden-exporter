@@ -45,6 +45,8 @@ type Config struct {
 	BnbMetrics       bool   `env:"BNB_METRICS"          envDefault:"false"                       mapstructure:"BNB_METRICS"`
 	BnbRPCURL        string `env:"BNB_RPC_URL"          envDefault:""                            mapstructure:"BNB_RPC_URL"`
 	BnbAddresses     string `env:"BNB_ADDRESSES"        envDefault:""                            mapstructure:"BNB_ADDRESSES"`
+	CoinGeckoMetrics bool   `env:"COINGECKO_METRICS"    envDefault:"false"                       mapstructure:"COINGECKO_METRICS"`
+	CoinGeckoAPIKey  string `env:"COINGECKO_API_KEY"    envDefault:""                            mapstructure:"COINGECKO_API_KEY"`
 	BlockWindow      int64  `env:"BLOCK_WINDOW"         envDefault:"200"                         mapstructure:"BLOCK_WINDOW"`
 }
 

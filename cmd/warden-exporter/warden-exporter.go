@@ -68,6 +68,13 @@ func main() {
 		go prometheus.MustRegister(bnbCollector)
 	}
 
+	if cfg.CoinGeckoMetrics {
+		coinGeckoCollector := collector.CoinGeckoCollector{
+			Cfg: cfg,
+		}
+		go prometheus.MustRegister(coinGeckoCollector)
+	}
+
 	mux := http.NewServeMux()
 	mux.Handle("/metrics", promhttp.Handler())
 	mux.HandleFunc("/healthz", healthCheckHandler)
