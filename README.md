@@ -23,6 +23,18 @@ Exporter are configured through ENV vars
 | WARP_DATABASE_USER   | string |                                        |
 | WARP_DATABASE_PASS   | string |                                        |
 | WARP_DATABASE_HOST   | string |                                        |
+| VENICE_METRICS       | bool   | false                                  |
+| VENICE_API_KEY       | string |                                        |
+| MESSARI_METRICS      | bool   | false                                  |
+| MESSARI_API_KEY      | string |                                        |
+| BASE_METRICS         | bool   | false                                  |
+| BASE_RPC_URL         | string |                                        |
+| BASE_ADDRESSES       | string |                                        |
+| BNB_METRICS          | bool   | false                                  |
+| BNB_RPC_URL          | string |                                        |
+| BNB_ADDRESSES        | string |                                        |
+| COINGECKO_METRICS    | bool   | false                                  |
+| COINGECKO_API_KEY    | string |                                        |
 
 ## Metrics
 
@@ -40,4 +52,13 @@ Returns these metrics of Warden Protocol
 - Wallet balances
 - Validator metrics
 - WARP metrics
+- Venice API metrics
+- Messari API metrics
+- Base blockchain wallet balances
+- BNB blockchain wallet balances
+- CoinGecko API usage metrics
+    - Rate limit per minute
+    - Monthly call credit
+    - Current total monthly calls
+    - Current remaining monthly calls
 ```
