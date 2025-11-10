@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.19.0](https://github.com/warden-protocol/warden-exporter/compare/v1.18.0...v1.19.0) (2025-11-10)
+
+
+### Features
+
+* coingecko monitoring ([#46](https://github.com/warden-protocol/warden-exporter/issues/46)) ([448e0f2](https://github.com/warden-protocol/warden-exporter/commit/448e0f2429cd89766b448156b715d558e9afb951))
+
 ## [1.18.0](https://github.com/warden-protocol/warden-exporter/compare/v1.17.0...v1.18.0) (2025-10-29)
 
 
