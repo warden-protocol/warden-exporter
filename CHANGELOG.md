@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.19.1](https://github.com/warden-protocol/warden-exporter/compare/v1.19.0...v1.19.1) (2025-11-11)
+
+
+### Bug Fixes
+
+* add keepalive ([02125c1](https://github.com/warden-protocol/warden-exporter/commit/02125c1a3b38eeca5e7ad67bbe7e7fb9d2d4a527))
+
 ## [1.19.0](https://github.com/warden-protocol/warden-exporter/compare/v1.18.0...v1.19.0) (2025-11-10)
 
 
