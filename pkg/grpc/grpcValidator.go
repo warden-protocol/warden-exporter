@@ -166,15 +166,22 @@ func SigningValidators(ctx context.Context, cfg config.Config) ([]validator.Vali
 	}
 
 	for _, info := range sInfos {
-		if _, ok := valsMap[info.Address]; !ok {
-			log.Debug(fmt.Sprintf("Not in validators: %s", info.Address))
+		val, ok := valsMap[info.Address]
+		if !ok {
+			log.Debug(fmt.Sprintf("Validator not found in validator set (may be unbonded/removed): %s", info.Address))
+			continue
 		}
 
-		val := valsMap[info.Address]
-
 		// Convert math.Int to float64 via big.Int
+		// Note: val.Tokens should never be nil for a valid validator, but we check defensively
+		var tokens float64
 		tokensBigInt := val.Tokens.BigInt()
-		tokens, _ := new(big.Float).SetInt(tokensBigInt).Float64()
+		if tokensBigInt != nil {
+			tokens, _ = new(big.Float).SetInt(tokensBigInt).Float64()
+		} else {
+			log.Debug(fmt.Sprintf("Validator %s has nil Tokens field, defaulting to 0", info.Address))
+			tokens = 0.0
+		}
 
 		// Convert math.LegacyDec to float64
 		delegatorShares, _ := val.DelegatorShares.Float64()
