@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.19.2](https://github.com/warden-protocol/warden-exporter/compare/v1.19.1...v1.19.2) (2025-11-11)
+
+
+### Bug Fixes
+
+* handle empty val information ([e984869](https://github.com/warden-protocol/warden-exporter/commit/e984869c3e0011b2286a01b7b58e0f58a47f2e85))
+
 ## [1.19.1](https://github.com/warden-protocol/warden-exporter/compare/v1.19.0...v1.19.1) (2025-11-11)
 
 
