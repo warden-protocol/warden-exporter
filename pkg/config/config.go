@@ -7,6 +7,7 @@ import (
 	"math"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/caarlos0/env/v10"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -14,6 +15,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/grpc/keepalive"
 )
 
 var errConfig = errors.New("config error")
@@ -114,6 +116,11 @@ func (c Config) GRPCConn() (*grpc.ClientConn, error) {
 		grpc.WithDefaultCallOptions(
 			grpc.MaxCallRecvMsgSize(math.MaxInt64),
 			grpc.ForceCodec(codec.NewProtoCodec(nil).GRPCCodec())),
+		grpc.WithKeepaliveParams(keepalive.ClientParameters{
+			Time:                time.Duration(c.Timeout),
+			Timeout:             time.Duration(c.Timeout),
+			PermitWithoutStream: true,
+		}),
 	)
 	if err != nil {
 		return nil, configError(err.Error())
