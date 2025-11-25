@@ -75,6 +75,13 @@ func main() {
 		go prometheus.MustRegister(coinGeckoCollector)
 	}
 
+	if cfg.XAIMetrics {
+		xaiCollector := collector.XAICollector{
+			Cfg: cfg,
+		}
+		go prometheus.MustRegister(xaiCollector)
+	}
+
 	mux := http.NewServeMux()
 	mux.Handle("/metrics", promhttp.Handler())
 	mux.HandleFunc("/healthz", healthCheckHandler)

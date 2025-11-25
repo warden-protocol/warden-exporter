@@ -1,7 +1,9 @@
 package http
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
@@ -20,6 +22,7 @@ func GetRequest(ctx context.Context, url string, apiKey string) ([]byte, error) 
 	}
 
 	req.Header.Add("Authorization", "Bearer "+apiKey)
+	req.Header.Add("Content-Type", "application/json")
 
 	client := &http.Client{}
 	resp, err = client.Do(req)
@@ -38,4 +41,42 @@ func GetRequest(ctx context.Context, url string, apiKey string) ([]byte, error) 
 	}
 
 	return body, nil
+}
+
+func PostRequest(ctx context.Context, url string, apiKey string, body interface{}) ([]byte, error) {
+	jsonBody, err := json.Marshal(body)
+	if err != nil {
+		return nil, fmt.Errorf("error marshaling request body: %w", err)
+	}
+
+	req, err := http.NewRequestWithContext(
+		ctx,
+		http.MethodPost,
+		url,
+		bytes.NewBuffer(jsonBody),
+	)
+	if err != nil {
+		return nil, fmt.Errorf("error creating request: %w", err)
+	}
+
+	req.Header.Add("Authorization", "Bearer "+apiKey)
+	req.Header.Add("Content-Type", "application/json")
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, fmt.Errorf("error performing request: %w", err)
+	}
+
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("received non-OK response: %d", resp.StatusCode)
+	}
+
+	responseBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, fmt.Errorf("error reading response body: %w", err)
+	}
+
+	return responseBody, nil
 }
