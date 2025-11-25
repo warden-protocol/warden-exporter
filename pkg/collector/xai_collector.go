@@ -5,13 +5,13 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"net/http"
 	"strconv"
 	"time"
 
 	"github.com/prometheus/client_golang/prometheus"
 
 	"github.com/warden-protocol/warden-exporter/pkg/config"
+	"github.com/warden-protocol/warden-exporter/pkg/http"
 	log "github.com/warden-protocol/warden-exporter/pkg/logger"
 )
 
@@ -311,7 +311,7 @@ func (x XAICollector) xaiCollectUsage(
 	requestBody.AnalyticsRequest.GroupBy = []string{"description"}
 	requestBody.AnalyticsRequest.Filters = []interface{}{}
 
-	data, err := x.makeXAIPostRequest(ctx, url, requestBody)
+	data, err := http.PostRequest(ctx, url, x.Cfg.XAIAPIKey, requestBody)
 	if err != nil {
 		return 0, err
 	}
@@ -336,7 +336,7 @@ func (x XAICollector) xaiCollectUsage(
 func (x XAICollector) xaiCollectSpendingLimits(ctx context.Context) (XAISpendingLimitsResponse, error) {
 	url := fmt.Sprintf("%s/billing/teams/%s/postpaid/spending-limits", xaiAPIURL, x.Cfg.XAITeamID)
 
-	data, err := x.makeXAIRequest(ctx, url)
+	data, err := http.GetRequest(ctx, url, x.Cfg.XAIAPIKey)
 	if err != nil {
 		return XAISpendingLimitsResponse{}, err
 	}
@@ -352,7 +352,7 @@ func (x XAICollector) xaiCollectSpendingLimits(ctx context.Context) (XAISpending
 func (x XAICollector) xaiCollectBalance(ctx context.Context) (XAIBalanceResponse, error) {
 	url := fmt.Sprintf("%s/billing/teams/%s/prepaid/balance", xaiAPIURL, x.Cfg.XAITeamID)
 
-	data, err := x.makeXAIRequest(ctx, url)
+	data, err := http.GetRequest(ctx, url, x.Cfg.XAIAPIKey)
 	if err != nil {
 		return XAIBalanceResponse{}, err
 	}
@@ -365,44 +365,6 @@ func (x XAICollector) xaiCollectBalance(ctx context.Context) (XAIBalanceResponse
 	return xaiResponse, nil
 }
 
-func (x XAICollector) makeXAIRequest(ctx context.Context, url string) ([]byte, error) {
-	req, err := http.NewRequestWithContext(
-		ctx,
-		http.MethodGet,
-		url,
-		nil,
-	)
-	if err != nil {
-		return nil, fmt.Errorf("error creating request: %w", err)
-	}
-
-	req.Header.Add("Authorization", "Bearer "+x.Cfg.XAIAPIKey)
-	req.Header.Add("Content-Type", "application/json")
-
-	client := &http.Client{
-		Timeout: time.Duration(x.Cfg.Timeout) * time.Second,
-	}
-	resp, err := client.Do(req)
-	if err != nil {
-		return nil, fmt.Errorf("error performing request: %w", err)
-	}
-
-	defer resp.Body.Close()
-
-	var buf bytes.Buffer
-	if _, errRead := buf.ReadFrom(resp.Body); errRead != nil {
-		return nil, fmt.Errorf("error reading response body: %w", errRead)
-	}
-
-	if resp.StatusCode != http.StatusOK {
-		log.Error(fmt.Sprintf("X.AI API error. Status: %d, URL: %s, Response: %s",
-			resp.StatusCode, url, buf.String()))
-		return nil, fmt.Errorf("received non-OK response: %d", resp.StatusCode)
-	}
-
-	return buf.Bytes(), nil
-}
-
 func (x XAICollector) parseFloatValue(val string) float64 {
 	if val == "" {
 		return 0
@@ -412,47 +374,4 @@ func (x XAICollector) parseFloatValue(val string) float64 {
 		return 0
 	}
 	return result
-}
-
-func (x XAICollector) makeXAIPostRequest(ctx context.Context, url string, body interface{}) ([]byte, error) {
-	jsonBody, err := json.Marshal(body)
-	if err != nil {
-		return nil, fmt.Errorf("error marshaling request body: %w", err)
-	}
-
-	req, err := http.NewRequestWithContext(
-		ctx,
-		http.MethodPost,
-		url,
-		bytes.NewBuffer(jsonBody),
-	)
-	if err != nil {
-		return nil, fmt.Errorf("error creating request: %w", err)
-	}
-
-	req.Header.Add("Authorization", "Bearer "+x.Cfg.XAIAPIKey)
-	req.Header.Add("Content-Type", "application/json")
-
-	client := &http.Client{
-		Timeout: time.Duration(x.Cfg.Timeout) * time.Second,
-	}
-	resp, err := client.Do(req)
-	if err != nil {
-		return nil, fmt.Errorf("error performing request: %w", err)
-	}
-
-	defer resp.Body.Close()
-
-	var buf bytes.Buffer
-	if _, errRead := buf.ReadFrom(resp.Body); errRead != nil {
-		return nil, fmt.Errorf("error reading response body: %w", errRead)
-	}
-
-	if resp.StatusCode != http.StatusOK {
-		log.Error(fmt.Sprintf("X.AI API error. Status: %d, URL: %s, Response: %s",
-			resp.StatusCode, url, buf.String()))
-		return nil, fmt.Errorf("received non-OK response: %d", resp.StatusCode)
-	}
-
-	return buf.Bytes(), nil
 }
