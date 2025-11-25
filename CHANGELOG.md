@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.20.0](https://github.com/warden-protocol/warden-exporter/compare/v1.19.2...v1.20.0) (2025-11-25)
+
+
+### Features
+
+* xai monitoring ([#50](https://github.com/warden-protocol/warden-exporter/issues/50)) ([274f706](https://github.com/warden-protocol/warden-exporter/commit/274f70681362124320b4e95fde76aa46d5df07a9))
+
 ## [1.19.2](https://github.com/warden-protocol/warden-exporter/compare/v1.19.1...v1.19.2) (2025-11-11)
 
 
