@@ -35,6 +35,9 @@ Exporter are configured through ENV vars
 | BNB_ADDRESSES        | string |                                        |
 | COINGECKO_METRICS    | bool   | false                                  |
 | COINGECKO_API_KEY    | string |                                        |
+| XAI_METRICS          | bool   | false                                  |
+| XAI_API_KEY          | string |                                        |
+| XAI_TEAM_ID          | string |                                        |
 
 ## Metrics
 
@@ -61,4 +64,8 @@ Returns these metrics of Warden Protocol
     - Monthly call credit
     - Current total monthly calls
     - Current remaining monthly calls
+- X.AI API metrics
+    - Usage (monthly and daily cost in USD)
+    - Postpaid spending limits (hard limit auto, effective hard limit, soft limit, effective limit)
+    - Prepaid balance (total balance in USD)
 ```

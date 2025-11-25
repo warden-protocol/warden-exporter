@@ -49,6 +49,9 @@ type Config struct {
 	BnbAddresses     string `env:"BNB_ADDRESSES"        envDefault:""                            mapstructure:"BNB_ADDRESSES"`
 	CoinGeckoMetrics bool   `env:"COINGECKO_METRICS"    envDefault:"false"                       mapstructure:"COINGECKO_METRICS"`
 	CoinGeckoAPIKey  string `env:"COINGECKO_API_KEY"    envDefault:""                            mapstructure:"COINGECKO_API_KEY"`
+	XAIMetrics       bool   `env:"XAI_METRICS"          envDefault:"false"                       mapstructure:"XAI_METRICS"`
+	XAIAPIKey        string `env:"XAI_API_KEY"          envDefault:""                            mapstructure:"XAI_API_KEY"`
+	XAITeamID        string `env:"XAI_TEAM_ID"          envDefault:""                            mapstructure:"XAI_TEAM_ID"`
 	BlockWindow      int64  `env:"BLOCK_WINDOW"         envDefault:"200"                         mapstructure:"BLOCK_WINDOW"`
 }
 
