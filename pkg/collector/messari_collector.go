@@ -85,7 +85,7 @@ func (m MessariCollector) messariCollectCredits(
 	ctx context.Context,
 ) (MessariCreditResponse, error) {
 	url := fmt.Sprintf("%s/user-management/v1/credits/allowance", messariAPIURL)
-	data, err := http.GetRequest(ctx, url, m.Cfg.MessariAPIKey)
+	data, err := http.GetRequest(ctx, url, m.Cfg.MessariAPIKey, m.Cfg.HTTPTimeout)
 	if err != nil {
 		return MessariCreditResponse{}, err
 	}

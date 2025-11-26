@@ -11,6 +11,7 @@ Exporter are configured through ENV vars
 | GRPC_ADDR            | string | grpc.buenavista.wardenprotocol.org:443 |
 | GRPC_TLS_ENABLED     | bool   | true                                   |
 | GRPC_TIMEOUT_SECONDS | int    | 5                                      |
+| HTTP_TIMEOUT_SECONDS | int    | 10                                     |
 | ENV_FILE             | string |                                        |
 | TTL                  | int    | 60                                     |
 | CHAIN_ID             | string | buenavista-1                           |
@@ -38,6 +39,8 @@ Exporter are configured through ENV vars
 | XAI_METRICS          | bool   | false                                  |
 | XAI_API_KEY          | string |                                        |
 | XAI_TEAM_ID          | string |                                        |
+| OPENAI_METRICS       | bool   | false                                  |
+| OPENAI_API_KEY       | string |                                        |
 
 ## Metrics
 
@@ -68,4 +71,6 @@ Returns these metrics of Warden Protocol
     - Usage (monthly and daily cost in USD)
     - Postpaid spending limits (hard limit auto, effective hard limit, soft limit, effective limit)
     - Prepaid balance (total balance in USD)
+- OpenAI API metrics
+    - Monthly costs in USD
 ```

@@ -7,9 +7,10 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"time"
 )
 
-func GetRequest(ctx context.Context, url string, apiKey string) ([]byte, error) {
+func GetRequest(ctx context.Context, url string, apiKey string, timeoutSeconds int) ([]byte, error) {
 	var resp *http.Response
 	req, err := http.NewRequestWithContext(
 		ctx,
@@ -24,7 +25,9 @@ func GetRequest(ctx context.Context, url string, apiKey string) ([]byte, error) 
 	req.Header.Add("Authorization", "Bearer "+apiKey)
 	req.Header.Add("Content-Type", "application/json")
 
-	client := &http.Client{}
+	client := &http.Client{
+		Timeout: time.Duration(timeoutSeconds) * time.Second,
+	}
 	resp, err = client.Do(req)
 	if err != nil {
 		return nil, fmt.Errorf("error performing request: %w", err)
@@ -43,7 +46,7 @@ func GetRequest(ctx context.Context, url string, apiKey string) ([]byte, error) 
 	return body, nil
 }
 
-func PostRequest(ctx context.Context, url string, apiKey string, body interface{}) ([]byte, error) {
+func PostRequest(ctx context.Context, url string, apiKey string, body interface{}, timeoutSeconds int) ([]byte, error) {
 	jsonBody, err := json.Marshal(body)
 	if err != nil {
 		return nil, fmt.Errorf("error marshaling request body: %w", err)
@@ -62,7 +65,9 @@ func PostRequest(ctx context.Context, url string, apiKey string, body interface{
 	req.Header.Add("Authorization", "Bearer "+apiKey)
 	req.Header.Add("Content-Type", "application/json")
 
-	client := &http.Client{}
+	client := &http.Client{
+		Timeout: time.Duration(timeoutSeconds) * time.Second,
+	}
 	resp, err := client.Do(req)
 	if err != nil {
 		return nil, fmt.Errorf("error performing request: %w", err)
