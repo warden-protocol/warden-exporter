@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.21.0](https://github.com/warden-protocol/warden-exporter/compare/v1.20.0...v1.21.0) (2025-11-26)
+
+
+### Features
+
+* openai metrics ([#52](https://github.com/warden-protocol/warden-exporter/issues/52)) ([4b17f77](https://github.com/warden-protocol/warden-exporter/commit/4b17f774c2b756314db61dbfea28f3ba1ab050cd))
+
 ## [1.20.0](https://github.com/warden-protocol/warden-exporter/compare/v1.19.2...v1.20.0) (2025-11-25)
 
 
