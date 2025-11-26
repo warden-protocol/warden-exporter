@@ -82,6 +82,13 @@ func main() {
 		go prometheus.MustRegister(xaiCollector)
 	}
 
+	if cfg.OpenAIMetrics {
+		openAICollector := collector.OpenAICollector{
+			Cfg: cfg,
+		}
+		go prometheus.MustRegister(openAICollector)
+	}
+
 	mux := http.NewServeMux()
 	mux.Handle("/metrics", promhttp.Handler())
 	mux.HandleFunc("/healthz", healthCheckHandler)

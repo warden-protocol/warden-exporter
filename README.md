@@ -38,6 +38,8 @@ Exporter are configured through ENV vars
 | XAI_METRICS          | bool   | false                                  |
 | XAI_API_KEY          | string |                                        |
 | XAI_TEAM_ID          | string |                                        |
+| OPENAI_METRICS       | bool   | false                                  |
+| OPENAI_API_KEY       | string |                                        |
 
 ## Metrics
 
@@ -68,4 +70,6 @@ Returns these metrics of Warden Protocol
     - Usage (monthly and daily cost in USD)
     - Postpaid spending limits (hard limit auto, effective hard limit, soft limit, effective limit)
     - Prepaid balance (total balance in USD)
+- OpenAI API metrics
+    - Monthly costs in USD
 ```
