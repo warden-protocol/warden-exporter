@@ -311,7 +311,7 @@ func (x XAICollector) xaiCollectUsage(
 	requestBody.AnalyticsRequest.GroupBy = []string{"description"}
 	requestBody.AnalyticsRequest.Filters = []interface{}{}
 
-	data, err := http.PostRequest(ctx, url, x.Cfg.XAIAPIKey, requestBody)
+	data, err := http.PostRequest(ctx, url, x.Cfg.XAIAPIKey, requestBody, x.Cfg.HTTPTimeout)
 	if err != nil {
 		return 0, err
 	}
@@ -336,7 +336,7 @@ func (x XAICollector) xaiCollectUsage(
 func (x XAICollector) xaiCollectSpendingLimits(ctx context.Context) (XAISpendingLimitsResponse, error) {
 	url := fmt.Sprintf("%s/billing/teams/%s/postpaid/spending-limits", xaiAPIURL, x.Cfg.XAITeamID)
 
-	data, err := http.GetRequest(ctx, url, x.Cfg.XAIAPIKey)
+	data, err := http.GetRequest(ctx, url, x.Cfg.XAIAPIKey, x.Cfg.HTTPTimeout)
 	if err != nil {
 		return XAISpendingLimitsResponse{}, err
 	}
@@ -352,7 +352,7 @@ func (x XAICollector) xaiCollectSpendingLimits(ctx context.Context) (XAISpending
 func (x XAICollector) xaiCollectBalance(ctx context.Context) (XAIBalanceResponse, error) {
 	url := fmt.Sprintf("%s/billing/teams/%s/prepaid/balance", xaiAPIURL, x.Cfg.XAITeamID)
 
-	data, err := http.GetRequest(ctx, url, x.Cfg.XAIAPIKey)
+	data, err := http.GetRequest(ctx, url, x.Cfg.XAIAPIKey, x.Cfg.HTTPTimeout)
 	if err != nil {
 		return XAIBalanceResponse{}, err
 	}

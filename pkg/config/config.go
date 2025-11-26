@@ -54,6 +54,7 @@ type Config struct {
 	XAITeamID        string `env:"XAI_TEAM_ID"          envDefault:""                            mapstructure:"XAI_TEAM_ID"`
 	OpenAIMetrics    bool   `env:"OPENAI_METRICS"       envDefault:"false"                       mapstructure:"OPENAI_METRICS"`
 	OpenAIAPIKey     string `env:"OPENAI_API_KEY"       envDefault:""                            mapstructure:"OPENAI_API_KEY"`
+	HTTPTimeout      int    `env:"HTTP_TIMEOUT_SECONDS" envDefault:"10"                          mapstructure:"HTTP_TIMEOUT_SECONDS"`
 	BlockWindow      int64  `env:"BLOCK_WINDOW"         envDefault:"200"                         mapstructure:"BLOCK_WINDOW"`
 }
 

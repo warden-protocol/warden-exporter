@@ -11,6 +11,7 @@ Exporter are configured through ENV vars
 | GRPC_ADDR            | string | grpc.buenavista.wardenprotocol.org:443 |
 | GRPC_TLS_ENABLED     | bool   | true                                   |
 | GRPC_TIMEOUT_SECONDS | int    | 5                                      |
+| HTTP_TIMEOUT_SECONDS | int    | 10                                     |
 | ENV_FILE             | string |                                        |
 | TTL                  | int    | 60                                     |
 | CHAIN_ID             | string | buenavista-1                           |

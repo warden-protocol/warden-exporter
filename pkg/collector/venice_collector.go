@@ -148,7 +148,7 @@ func (v VeniceCollector) Collect(ch chan<- prometheus.Metric) {
 func (v VeniceCollector) veniceCollectUsage(ctx context.Context) (VeniceUsageResponse, error) {
 	url := fmt.Sprintf("%s/api_keys", veniceAPIURL)
 
-	data, err := http.GetRequest(ctx, url, v.Cfg.VeniceAPIKey)
+	data, err := http.GetRequest(ctx, url, v.Cfg.VeniceAPIKey, v.Cfg.HTTPTimeout)
 	if err != nil {
 		return VeniceUsageResponse{}, err
 	}
@@ -166,7 +166,7 @@ func (v VeniceCollector) veniceCollectUsage(ctx context.Context) (VeniceUsageRes
 func (v VeniceCollector) veniceCollectBalance(ctx context.Context) (float64, float64, error) {
 	url := fmt.Sprintf("%s/api_keys/rate_Limits", veniceAPIURL)
 	// Perform HTTP GET request to Venice API
-	data, err := http.GetRequest(ctx, url, v.Cfg.VeniceAPIKey)
+	data, err := http.GetRequest(ctx, url, v.Cfg.VeniceAPIKey, v.Cfg.HTTPTimeout)
 	if err != nil {
 		return 0, 0, err
 	}

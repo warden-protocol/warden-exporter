@@ -101,12 +101,12 @@ func (o OpenAICollector) openAICollectCosts(
 	ctx context.Context,
 	startTime, endTime time.Time,
 ) (float64, error) {
-	days := int(endTime.Sub(startTime).Hours()/24) + 1
+	days := int(endTime.Sub(startTime)/(24*time.Hour)) + 1
 
 	url := fmt.Sprintf("%s/organization/costs?start_time=%d&limit=%d",
 		openAIAPIURL, startTime.Unix(), days)
 
-	data, err := http.GetRequest(ctx, url, o.Cfg.OpenAIAPIKey)
+	data, err := http.GetRequest(ctx, url, o.Cfg.OpenAIAPIKey, o.Cfg.HTTPTimeout)
 	if err != nil {
 		return 0, err
 	}
