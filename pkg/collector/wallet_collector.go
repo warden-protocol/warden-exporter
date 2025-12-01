@@ -55,7 +55,14 @@ func (w WalletBalanceCollector) Collect(ch chan<- prometheus.Metric) {
 	client, err := grpc.NewClient(w.Cfg)
 	if err != nil {
 		log.Error(fmt.Sprintf("error getting wallet balance metrics: %s", err))
+		return
 	}
+
+	defer func() {
+		if tempErr := client.CloseConn(); tempErr != nil {
+			log.Error(tempErr.Error())
+		}
+	}()
 
 	addresses := strings.Split(w.Cfg.WalletAddresses, ",")
 	for _, addr := range addresses {

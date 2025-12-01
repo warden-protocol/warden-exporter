@@ -40,6 +40,13 @@ func main() {
 		go prometheus.MustRegister(validatorCollector)
 	}
 
+	if cfg.MintMetrics {
+		mintCollector := collector.MintCollector{
+			Cfg: cfg,
+		}
+		go prometheus.MustRegister(mintCollector)
+	}
+
 	if cfg.VeniceMetrics {
 		veniceCollector := collector.VeniceCollector{
 			Cfg: cfg,

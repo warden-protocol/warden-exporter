@@ -34,3 +34,11 @@ func NewClient(cfg config.Config) (Client, error) {
 
 	return client, nil
 }
+
+func (c Client) CloseConn() error {
+	if c.conn == nil {
+		return nil
+	}
+
+	return c.conn.Close()
+}

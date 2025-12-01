@@ -10,7 +10,6 @@ import (
 	"time"
 
 	"github.com/caarlos0/env/v10"
-	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/spf13/viper"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
@@ -34,6 +33,7 @@ type Config struct {
 	TTL              int    `env:"TTL"                  envDefault:"60"                          mapstructure:"TTL"`
 	ChainID          string `env:"CHAIN_ID"             envDefault:"warden_8765-1"               mapstructure:"CHAIN_ID"`
 	ValidatorMetrics bool   `env:"VALIDATOR_METRICS"    envDefault:"true"                        mapstructure:"VALIDATOR_METRICS"`
+	MintMetrics      bool   `env:"MINT_METRICS"         envDefault:"true"                        mapstructure:"MINT_METRICS"`
 	WalletAddresses  string `env:"WALLET_ADDRESSES"     envDefault:""                            mapstructure:"WALLET_ADDRESSES"`
 	Denom            string `env:"DENOM"                envDefault:"award"                       mapstructure:"DENOM"`
 	Exponent         int    `env:"EXPONENT"             envDefault:"18"                          mapstructure:"EXPONENT"`
@@ -120,8 +120,7 @@ func (c Config) GRPCConn() (*grpc.ClientConn, error) {
 		c.GRPCAddr,
 		transportCreds,
 		grpc.WithDefaultCallOptions(
-			grpc.MaxCallRecvMsgSize(math.MaxInt64),
-			grpc.ForceCodec(codec.NewProtoCodec(nil).GRPCCodec())),
+			grpc.MaxCallRecvMsgSize(math.MaxInt64)),
 		grpc.WithKeepaliveParams(keepalive.ClientParameters{
 			Time:                time.Duration(c.Timeout),
 			Timeout:             time.Duration(c.Timeout),
