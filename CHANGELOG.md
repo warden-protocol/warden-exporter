@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.22.0](https://github.com/warden-protocol/warden-exporter/compare/v1.21.0...v1.22.0) (2025-12-01)
+
+
+### Features
+
+* add mint collector ([d2da43b](https://github.com/warden-protocol/warden-exporter/commit/d2da43bb6a508376cc5607531d9d336e72082dc6))
+
 ## [1.21.0](https://github.com/warden-protocol/warden-exporter/compare/v1.20.0...v1.21.0) (2025-11-26)
 
 
