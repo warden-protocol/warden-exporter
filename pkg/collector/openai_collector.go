@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"strconv"
 	"time"
 
 	"github.com/prometheus/client_golang/prometheus"
@@ -23,7 +24,7 @@ type OpenAICostsResponse struct {
 	Data []struct {
 		Results []struct {
 			Amount struct {
-				Value float64 `json:"value"`
+				Value json.Number `json:"value"`
 			} `json:"amount"`
 		} `json:"results"`
 	} `json:"data"`
@@ -111,15 +112,24 @@ func (o OpenAICollector) openAICollectCosts(
 		return 0, err
 	}
 
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	decoder.UseNumber()
+
 	var costsResponse OpenAICostsResponse
-	if err = json.NewDecoder(bytes.NewReader(data)).Decode(&costsResponse); err != nil {
+	if err = decoder.Decode(&costsResponse); err != nil {
 		return 0, fmt.Errorf("error decoding response: %w", err)
 	}
 
 	var total float64
 	for _, bucket := range costsResponse.Data {
 		for _, res := range bucket.Results {
-			total += res.Amount.Value
+			valueStr := string(res.Amount.Value)
+			value, err := strconv.ParseFloat(valueStr, 64)
+			if err != nil {
+				log.Error(fmt.Sprintf("error parsing amount value '%s': %s", valueStr, err))
+				continue
+			}
+			total += value
 		}
 	}
 
