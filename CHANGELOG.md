@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.22.1](https://github.com/warden-protocol/warden-exporter/compare/v1.22.0...v1.22.1) (2025-12-08)
+
+
+### Bug Fixes
+
+* openai costs parsing error ([#55](https://github.com/warden-protocol/warden-exporter/issues/55)) ([777425d](https://github.com/warden-protocol/warden-exporter/commit/777425d95a6ae9ef44c34346aaefb02f050acfea))
+
 ## [1.22.0](https://github.com/warden-protocol/warden-exporter/compare/v1.21.0...v1.22.0) (2025-12-01)
 
 
