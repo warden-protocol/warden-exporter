@@ -124,9 +124,9 @@ func (o OpenAICollector) openAICollectCosts(
 	for _, bucket := range costsResponse.Data {
 		for _, res := range bucket.Results {
 			valueStr := string(res.Amount.Value)
-			value, err := strconv.ParseFloat(valueStr, 64)
-			if err != nil {
-				log.Error(fmt.Sprintf("error parsing amount value '%s': %s", valueStr, err))
+			value, parseErr := strconv.ParseFloat(valueStr, 64)
+			if parseErr != nil {
+				log.Error(fmt.Sprintf("error parsing amount value '%s': %s", valueStr, parseErr))
 				continue
 			}
 			total += value
