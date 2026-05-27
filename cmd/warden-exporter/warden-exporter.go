@@ -96,6 +96,20 @@ func main() {
 		go prometheus.MustRegister(openAICollector)
 	}
 
+	if cfg.TavilyMetrics {
+		tavilyCollector := collector.TavilyCollector{
+			Cfg: cfg,
+		}
+		go prometheus.MustRegister(tavilyCollector)
+	}
+
+	if cfg.OpenRouterMetrics {
+		openRouterCollector := collector.OpenRouterCollector{
+			Cfg: cfg,
+		}
+		go prometheus.MustRegister(openRouterCollector)
+	}
+
 	mux := http.NewServeMux()
 	mux.Handle("/metrics", promhttp.Handler())
 	mux.HandleFunc("/healthz", healthCheckHandler)

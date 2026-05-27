@@ -17,6 +17,33 @@ const (
 	successStatus = "success"
 )
 
+func splitCommaList(s string) []string {
+	parts := strings.Split(s, ",")
+	out := make([]string, 0, len(parts))
+	for _, p := range parts {
+		p = strings.TrimSpace(p)
+		if p != "" {
+			out = append(out, p)
+		}
+	}
+	return out
+}
+
+func redactKey(k string) string {
+	if len(k) < 8 {
+		return "***"
+	}
+	prefix := k
+	if len(prefix) > 12 {
+		prefix = k[:12]
+	}
+	suffix := k
+	if len(suffix) > 3 {
+		suffix = k[len(k)-3:]
+	}
+	return prefix + "..." + suffix
+}
+
 type JSONRPCRequest struct {
 	JSONRPC string `json:"jsonrpc"`
 	Method  string `json:"method"`

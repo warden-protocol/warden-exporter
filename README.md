@@ -41,6 +41,10 @@ Exporter are configured through ENV vars
 | XAI_TEAM_ID          | string |                                        |
 | OPENAI_METRICS       | bool   | false                                  |
 | OPENAI_API_KEY       | string |                                        |
+| TAVILY_METRICS       | bool   | false                                  |
+| TAVILY_API_KEY       | string |                                        |
+| OPENROUTER_METRICS   | bool   | false                                  |
+| OPENROUTER_API_KEY   | string |                                        |
 
 ## Metrics
 
@@ -58,7 +62,7 @@ Returns these metrics of Warden Protocol
 - Wallet balances
 - Validator metrics
 - WARP metrics
-- Venice API metrics
+- Venice API metrics (`VENICE_API_KEY` accepts a comma-separated list of keys for multiple accounts)
 - Messari API metrics
 - Base blockchain wallet balances
 - BNB blockchain wallet balances
@@ -73,4 +77,11 @@ Returns these metrics of Warden Protocol
     - Prepaid balance (total balance in USD)
 - OpenAI API metrics
     - Monthly costs in USD
+- Tavily API metrics
+    - Plan usage (credits consumed in current billing cycle)
+    - Plan limit (credit ceiling for current billing cycle)
+- OpenRouter API metrics (`OPENROUTER_API_KEY` accepts a comma-separated list of keys)
+    - Usage in USD (total, daily, weekly, monthly)
+    - Spending limit and remaining for the configured period
+    - Account purchased credits and total credit usage in USD
 ```

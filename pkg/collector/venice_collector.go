@@ -51,6 +51,7 @@ var veniceBilling = prometheus.NewDesc(
 	veniceBillingMetricName,
 	"Returns Venice Billing information",
 	[]string{
+		"account",
 		"symbol",
 		"status",
 	},
@@ -62,6 +63,7 @@ var veniceUsage = prometheus.NewDesc(
 	veniceUsageMetricName,
 	"Returns Venice API Key usage information",
 	[]string{
+		"account",
 		"id",
 		"description",
 		"symbol",
@@ -80,16 +82,26 @@ func (v VeniceCollector) Describe(ch chan<- *prometheus.Desc) {
 }
 
 func (v VeniceCollector) Collect(ch chan<- prometheus.Metric) {
-	var err error
 	ctx, cancel := context.WithTimeout(
 		context.Background(),
 		time.Duration(v.Cfg.Timeout)*time.Second,
 	)
 	defer cancel()
 
+	for _, apiKey := range splitCommaList(v.Cfg.VeniceAPIKey) {
+		v.collectAccount(ctx, ch, apiKey)
+	}
+}
+
+func (v VeniceCollector) collectAccount(
+	ctx context.Context,
+	ch chan<- prometheus.Metric,
+	apiKey string,
+) {
+	account := redactKey(apiKey)
 	status := successStatus
 
-	diemBalance, usdBalance, err := v.veniceCollectBalance(ctx)
+	diemBalance, usdBalance, err := v.veniceCollectBalance(ctx, apiKey)
 	if err != nil {
 		log.Error(fmt.Sprintf("error collecting Venice balance: %s", err))
 		status = errorStatus
@@ -100,6 +112,7 @@ func (v VeniceCollector) Collect(ch chan<- prometheus.Metric) {
 		prometheus.GaugeValue,
 		diemBalance,
 		[]string{
+			account,
 			"DIEM",
 			status,
 		}...,
@@ -110,12 +123,13 @@ func (v VeniceCollector) Collect(ch chan<- prometheus.Metric) {
 		prometheus.GaugeValue,
 		usdBalance,
 		[]string{
+			account,
 			"USD",
 			status,
 		}...,
 	)
 
-	usage, err := v.veniceCollectUsage(ctx)
+	usage, err := v.veniceCollectUsage(ctx, apiKey)
 	if err != nil {
 		log.Error(fmt.Sprintf("error collecting Venice usage: %s", err))
 		status = errorStatus
@@ -128,6 +142,7 @@ func (v VeniceCollector) Collect(ch chan<- prometheus.Metric) {
 			veniceUsage,
 			prometheus.GaugeValue,
 			diemCount,
+			account,
 			data.ID,
 			data.Description,
 			"DIEM",
@@ -137,6 +152,7 @@ func (v VeniceCollector) Collect(ch chan<- prometheus.Metric) {
 			veniceUsage,
 			prometheus.GaugeValue,
 			usdCount,
+			account,
 			data.ID,
 			data.Description,
 			"USD",
@@ -145,10 +161,13 @@ func (v VeniceCollector) Collect(ch chan<- prometheus.Metric) {
 	}
 }
 
-func (v VeniceCollector) veniceCollectUsage(ctx context.Context) (VeniceUsageResponse, error) {
+func (v VeniceCollector) veniceCollectUsage(
+	ctx context.Context,
+	apiKey string,
+) (VeniceUsageResponse, error) {
 	url := fmt.Sprintf("%s/api_keys", veniceAPIURL)
 
-	data, err := http.GetRequest(ctx, url, v.Cfg.VeniceAPIKey, v.Cfg.HTTPTimeout)
+	data, err := http.GetRequest(ctx, url, apiKey, v.Cfg.HTTPTimeout)
 	if err != nil {
 		return VeniceUsageResponse{}, err
 	}
@@ -163,10 +182,13 @@ func (v VeniceCollector) veniceCollectUsage(ctx context.Context) (VeniceUsageRes
 	return veniceResponse, nil
 }
 
-func (v VeniceCollector) veniceCollectBalance(ctx context.Context) (float64, float64, error) {
+func (v VeniceCollector) veniceCollectBalance(
+	ctx context.Context,
+	apiKey string,
+) (float64, float64, error) {
 	url := fmt.Sprintf("%s/api_keys/rate_Limits", veniceAPIURL)
-	// Perform HTTP GET request to Venice API
-	data, err := http.GetRequest(ctx, url, v.Cfg.VeniceAPIKey, v.Cfg.HTTPTimeout)
+
+	data, err := http.GetRequest(ctx, url, apiKey, v.Cfg.HTTPTimeout)
 	if err != nil {
 		return 0, 0, err
 	}
