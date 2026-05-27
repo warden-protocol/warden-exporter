@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.23.0](https://github.com/warden-protocol/warden-exporter/compare/v1.22.1...v1.23.0) (2026-05-27)
+
+
+### Features
+
+* add Tavily and OpenRouter metrics collectors ([cc49dae](https://github.com/warden-protocol/warden-exporter/commit/cc49dae5922cfa7a60c3d115eab8d383fd24d9a7))
+
 ## [1.22.1](https://github.com/warden-protocol/warden-exporter/compare/v1.22.0...v1.22.1) (2025-12-08)
 
 
