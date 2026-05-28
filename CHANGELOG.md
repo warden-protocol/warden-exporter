@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.24.0](https://github.com/warden-protocol/warden-exporter/compare/v1.23.0...v1.24.0) (2026-05-28)
+
+
+### Features
+
+* add Composio metrics collector ([11739c9](https://github.com/warden-protocol/warden-exporter/commit/11739c9e0b346115d7f05c54f4a761a3e61c8b9a))
+
 ## [1.23.0](https://github.com/warden-protocol/warden-exporter/compare/v1.22.1...v1.23.0) (2026-05-27)
 
 
