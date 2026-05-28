@@ -58,6 +58,8 @@ type Config struct {
 	TavilyAPIKey     string `env:"TAVILY_API_KEY"       envDefault:""                            mapstructure:"TAVILY_API_KEY"`
 	OpenRouterMetrics bool  `env:"OPENROUTER_METRICS"   envDefault:"false"                       mapstructure:"OPENROUTER_METRICS"`
 	OpenRouterAPIKey string `env:"OPENROUTER_API_KEY"   envDefault:""                            mapstructure:"OPENROUTER_API_KEY"`
+	ComposioMetrics  bool   `env:"COMPOSIO_METRICS"     envDefault:"false"                       mapstructure:"COMPOSIO_METRICS"`
+	ComposioAPIKey   string `env:"COMPOSIO_API_KEY"     envDefault:""                            mapstructure:"COMPOSIO_API_KEY"`
 	HTTPTimeout      int    `env:"HTTP_TIMEOUT_SECONDS" envDefault:"10"                          mapstructure:"HTTP_TIMEOUT_SECONDS"`
 	BlockWindow      int64  `env:"BLOCK_WINDOW"         envDefault:"200"                         mapstructure:"BLOCK_WINDOW"`
 }

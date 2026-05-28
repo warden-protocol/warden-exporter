@@ -110,6 +110,13 @@ func main() {
 		go prometheus.MustRegister(openRouterCollector)
 	}
 
+	if cfg.ComposioMetrics {
+		composioCollector := collector.ComposioCollector{
+			Cfg: cfg,
+		}
+		go prometheus.MustRegister(composioCollector)
+	}
+
 	mux := http.NewServeMux()
 	mux.Handle("/metrics", promhttp.Handler())
 	mux.HandleFunc("/healthz", healthCheckHandler)
