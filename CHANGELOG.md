@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.25.0](https://github.com/warden-protocol/warden-exporter/compare/v1.24.0...v1.25.0) (2026-05-29)
+
+
+### Features
+
+* add Venice usage metrics configuration ([bb84324](https://github.com/warden-protocol/warden-exporter/commit/bb8432496e679bf00212cd9a5ab63e3f81c5404c))
+
 ## [1.24.0](https://github.com/warden-protocol/warden-exporter/compare/v1.23.0...v1.24.0) (2026-05-28)
 
 
