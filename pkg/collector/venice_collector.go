@@ -129,6 +129,10 @@ func (v VeniceCollector) collectAccount(
 		}...,
 	)
 
+	if !v.Cfg.VeniceUsageMetrics {
+		return
+	}
+
 	usage, err := v.veniceCollectUsage(ctx, apiKey)
 	if err != nil {
 		log.Error(fmt.Sprintf("error collecting Venice usage: %s", err))
