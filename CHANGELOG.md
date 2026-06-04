@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.26.0](https://github.com/warden-protocol/warden-exporter/compare/v1.25.0...v1.26.0) (2026-06-04)
+
+
+### Features
+
+* Tavily collector supports multiple API keys ([27b15d5](https://github.com/warden-protocol/warden-exporter/commit/27b15d5a98a5ab5b30e8dccdf2633c8c4af6effd))
+
 ## [1.25.0](https://github.com/warden-protocol/warden-exporter/compare/v1.24.0...v1.25.0) (2026-05-29)
 
 
