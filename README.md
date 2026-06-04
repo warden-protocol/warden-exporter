@@ -79,7 +79,7 @@ Returns these metrics
     - Prepaid balance (total balance in USD)
 - OpenAI API metrics
     - Monthly costs in USD
-- Tavily API metrics
+- Tavily API metrics (`TAVILY_API_KEY` accepts a comma-separated list of keys)
     - Plan usage (credits consumed in current billing cycle)
     - Plan limit (credit ceiling for current billing cycle)
 - OpenRouter API metrics (`OPENROUTER_API_KEY` accepts a comma-separated list of keys)

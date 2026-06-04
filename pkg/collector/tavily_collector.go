@@ -33,6 +33,7 @@ var (
 		tavilyPlanUsageMetricName,
 		"Returns Tavily API account plan usage (credits consumed in current billing cycle)",
 		[]string{
+			"key",
 			"plan",
 			"unit",
 			"status",
@@ -44,6 +45,7 @@ var (
 		tavilyPlanLimitMetricName,
 		"Returns Tavily API account plan limit (credit ceiling for current billing cycle)",
 		[]string{
+			"key",
 			"plan",
 			"unit",
 			"status",
@@ -68,9 +70,20 @@ func (c TavilyCollector) Collect(ch chan<- prometheus.Metric) {
 	)
 	defer cancel()
 
+	for _, apiKey := range splitCommaList(c.Cfg.TavilyAPIKey) {
+		c.collectKey(ctx, ch, apiKey)
+	}
+}
+
+func (c TavilyCollector) collectKey(
+	ctx context.Context,
+	ch chan<- prometheus.Metric,
+	apiKey string,
+) {
+	keyLabel := redactKey(apiKey)
 	status := successStatus
 
-	response, err := c.tavilyCollectUsage(ctx)
+	response, err := c.tavilyCollectUsage(ctx, apiKey)
 	if err != nil {
 		log.Error(fmt.Sprintf("error collecting Tavily usage %s", err))
 		status = errorStatus
@@ -82,6 +95,7 @@ func (c TavilyCollector) Collect(ch chan<- prometheus.Metric) {
 		prometheus.GaugeValue,
 		response.Account.PlanUsage,
 		[]string{
+			keyLabel,
 			response.Account.CurrentPlan,
 			"credits",
 			status,
@@ -93,6 +107,7 @@ func (c TavilyCollector) Collect(ch chan<- prometheus.Metric) {
 		prometheus.GaugeValue,
 		response.Account.PlanLimit,
 		[]string{
+			keyLabel,
 			response.Account.CurrentPlan,
 			"credits",
 			status,
@@ -100,10 +115,13 @@ func (c TavilyCollector) Collect(ch chan<- prometheus.Metric) {
 	)
 }
 
-func (c TavilyCollector) tavilyCollectUsage(ctx context.Context) (TavilyUsageResponse, error) {
+func (c TavilyCollector) tavilyCollectUsage(
+	ctx context.Context,
+	apiKey string,
+) (TavilyUsageResponse, error) {
 	url := fmt.Sprintf("%s/usage", tavilyAPIURL)
 
-	data, err := http.GetRequest(ctx, url, c.Cfg.TavilyAPIKey, c.Cfg.HTTPTimeout)
+	data, err := http.GetRequest(ctx, url, apiKey, c.Cfg.HTTPTimeout)
 	if err != nil {
 		return TavilyUsageResponse{}, err
 	}
